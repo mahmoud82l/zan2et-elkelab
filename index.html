@@ -56,9 +56,8 @@
     // تظبيط مكتبة الـ PDF
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    // تمويه المفتاح (مكتوب بـ Base64 عشان ميكونش مكشوف للعين)
-    const encodedKey = "QVEuQWI4Uk42S0RJZzlueDhPbTVIZUNMdHFjWmYzWHU2R0tMRXJTNmlTVzkzTjdlZ0VIckE=";
-    const API_KEY = atob(encodedKey);
+    // حط المفتاح بتاعك هنا بين علامات التنصيص
+    const API_KEY = "حط_المفتاح_بتاعك_هنا";
 
     let timerInterval;
 
@@ -93,7 +92,7 @@
             }
 
             // تجهيز الطلب للذكاء الاصطناعي
-            const textSnippet = text.substring(0, 10000); // تحديد الحجم عشان الباقة
+            const textSnippet = text.substring(0, 10000); 
             let prompt = "";
             
             if (action === 'summary') {
@@ -107,7 +106,7 @@
             const responseText = await fetchGeminiAPI(prompt);
             document.getElementById('contentArea').innerHTML = responseText.replace(/\n/g, '<br>');
 
-            // تظبيط وقت الامتحان لو اختار امتحان
+            // تظبيط وقت الامتحان
             if (action === 'exam') {
                 document.getElementById('timerDisplay').classList.remove('hidden');
                 document.getElementById('submitBtn').classList.remove('hidden');
@@ -130,7 +129,7 @@
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
         let fullText = "";
-        for (let i = 1; i <= pdf.numPages && i <= 10; i++) { // نقرأ أول 10 صفحات عشان السرعة
+        for (let i = 1; i <= pdf.numPages && i <= 10; i++) { 
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
             fullText += textContent.items.map(item => item.str).join(" ") + "\n";
@@ -153,7 +152,7 @@
         if (data.candidates && data.candidates.length > 0) {
             return data.candidates[0].content.parts[0].text;
         } else {
-            throw new Error("جوجل مردتش علينا، ممكن تكون الباقة خلصت أو في ضغط.");
+            throw new Error("جوجل مردتش علينا، اتأكد إن المفتاح صح.");
         }
     }
 
