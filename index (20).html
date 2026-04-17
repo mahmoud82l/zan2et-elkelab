@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة زنقة الكلاب</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ffffff; text-align: center; padding: 20px; }
+        .container { background-color: #1e1e2f; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 700px; margin: auto; }
+        input[type="file"] { display: none; }
+        .custom-file-upload { display: inline-block; padding: 12px 25px; cursor: pointer; background-color: #3742fa; color: white; border-radius: 8px; font-size: 16px; font-weight: bold; margin-bottom: 20px; border: 2px dashed #ffffff; transition: 0.3s; }
+        .custom-file-upload:hover { background-color: #5352ed; transform: scale(1.05); }
+        .btn { background-color: #ff4757; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 10px; font-weight: bold; transition: 0.3s; }
+        .btn:hover { background-color: #ff6b81; transform: scale(1.05); }
+        .btn-summary { background-color: #2ed573; }
+        .btn-summary:hover { background-color: #7bed9f; }
+        select { padding: 10px; font-size: 15px; border-radius: 5px; margin-bottom: 20px; background-color: #2f3542; color: white; border: 1px solid #57606f; }
+        .hidden { display: none; }
+        .result-box { background-color: #2f3542; padding: 20px; border-radius: 10px; margin-top: 20px; text-align: right; line-height: 1.8; font-size: 16px; overflow-wrap: break-word; }
+        .timer { font-size: 24px; color: #ff4757; font-weight: bold; margin: 15px 0; text-align: center;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚀 شقلبلي المنهج</h2>
+    <p>ارفع ملفك واختار عايز إيه بالظبط</p>
+    
+    <label for="studyFile" class="custom-file-upload" id="fileLabel">📁 اضغط هنا عشان ترفع الملف (PDF/TXT)</label>
+    <input type="file" id="studyFile" accept=".pdf, .txt" onchange="document.getElementById('fileLabel').innerText = '✅ تم اختيار: ' + this.files[0].name">
+    <br>
+    
+    <label>مستوى الامتحان:</label>
+    <select id="difficulty">
+        <option value="سهل">سهل (يا دوب بنسخن)</option>
+        <option value="متوسط" selected>متوسط (طالب جامد)</option>
+        <option value="صعب جدا">صعب (تحدي الدحيحة)</option>
+    </select>
+    <br>
+
+    <button class="btn btn-summary" onclick="processFile('summary')">لخصلي المنهج بس</button>
+    <button class="btn" onclick="processFile('exam')">امتحنني</button>
+
+    <audio id="hypeMusic" src="song.mp3"></audio>
+
+    <div id="resultSection" class="hidden result-box">
+        <div class="timer hidden" id="timerDisplay">الوقت: 00:00</div>
+        <h3 id="resultTitle">⏳ جاري التحميل...</h3>
+        <div id="contentArea"></div>
+        <button id="submitBtn" class="btn hidden" onclick="finishExam()" style="display: block; margin: auto; margin-top: 20px;">سلم الورقة</button>
+    </div>
+</div>
+
+<script>
+    // تظبيط مكتبة الـ PDF
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+
+    // تمويه المفتاح (مكتوب بـ Base64 عشان ميكونش مكشوف للعين)
+    const encodedKey = "QVEuQWI4Uk42S0RJZzlueDhPbTVIZUNMdHFjWmYzWHU2R0tMRXJTNmlTVzkzTjdlZ0VIckE=";
+    const API_KEY = atob(encodedKey);
+
+    let timerInterval;
+
+    async function processFile(action) {
+        const fileInput = document.getElementById('studyFile');
+        if (fileInput.files.length === 0) {
+            alert("يا صاحبي نسيت ترفع الملف!");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        let text = "";
+
+        // عرض الشاشة قبل ما البيانات تيجي
+        document.getElementById('resultSection').classList.remove('hidden');
+        document.getElementById('contentArea').innerHTML = "<b>جاري قراءة الملف وتجهيز الطلب... ثواني يا وحش ⏳</b>";
+        document.getElementById('resultTitle').innerText = action === 'summary' ? "📝 ملخص المنهج:" : "⏳ الامتحان:";
+        document.getElementById('submitBtn').classList.add('hidden');
+        document.getElementById('timerDisplay').classList.add('hidden');
+        stopAudio();
+        clearInterval(timerInterval);
+
+        try {
+            if (file.name.toLowerCase().endsWith('.pdf')) {
+                text = await extractTextFromPDF(file);
+            } else {
+                text = await file.text();
+            }
+
+            if (!text.trim()) {
+                throw new Error("الملف فاضي أو مقدرناش نقرأه.");
+            }
+
+            // تجهيز الطلب للذكاء الاصطناعي
+            const textSnippet = text.substring(0, 10000); // تحديد الحجم عشان الباقة
+            let prompt = "";
+            
+            if (action === 'summary') {
+                prompt = `أنت مساعد دراسي جامعي. قم بعمل ملخص شامل، منظم، ومبسط باللغة العربية (يمكن استخدام مصطلحات عامية مصرية) لهذا النص الأكاديمي. استخدم النقاط العريضة:\n\n${textSnippet}`;
+            } else {
+                const diff = document.getElementById('difficulty').value;
+                prompt = `بناءً على هذا النص، قم بعمل امتحان MCQ (اختيار من متعدد) مكون من 5 أسئلة بمستوى (${diff}). اطبع الأسئلة والاختيارات بشكل واضح وضع الإجابات الصحيحة في نهاية الامتحان:\n\n${textSnippet}`;
+            }
+
+            // إرسال الطلب لجوجل
+            const responseText = await fetchGeminiAPI(prompt);
+            document.getElementById('contentArea').innerHTML = responseText.replace(/\n/g, '<br>');
+
+            // تظبيط وقت الامتحان لو اختار امتحان
+            if (action === 'exam') {
+                document.getElementById('timerDisplay').classList.remove('hidden');
+                document.getElementById('submitBtn').classList.remove('hidden');
+                
+                let diffLevel = document.getElementById('difficulty').value;
+                let time = diffLevel === 'سهل' ? 600 : diffLevel === 'متوسط' ? 300 : 120;
+                startTimer(time);
+                
+                let audio = document.getElementById('hypeMusic');
+                audio.play().catch(() => console.log("تحتاج أغنية باسم song.mp3 في الاستضافة"));
+            }
+
+        } catch (error) {
+            document.getElementById('contentArea').innerHTML = `<b style="color:red;">حصلت مشكلة: ${error.message}</b>`;
+        }
+    }
+
+    // دالة استخراج النص من PDF
+    async function extractTextFromPDF(file) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
+        let fullText = "";
+        for (let i = 1; i <= pdf.numPages && i <= 10; i++) { // نقرأ أول 10 صفحات عشان السرعة
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+        }
+        return fullText;
+    }
+
+    // دالة الاتصال بـ Gemini مباشرة
+    async function fetchGeminiAPI(promptText) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: promptText }] }]
+            })
+        });
+        
+        const data = await response.json();
+        if (data.candidates && data.candidates.length > 0) {
+            return data.candidates[0].content.parts[0].text;
+        } else {
+            throw new Error("جوجل مردتش علينا، ممكن تكون الباقة خلصت أو في ضغط.");
+        }
+    }
+
+    function startTimer(seconds) {
+        clearInterval(timerInterval);
+        let timerDisplay = document.getElementById('timerDisplay');
+        
+        timerInterval = setInterval(() => {
+            let min = Math.floor(seconds / 60);
+            let sec = seconds % 60;
+            timerDisplay.innerText = `الوقت: ${min < 10 ? '0':''}${min}:${sec < 10 ? '0':''}${sec}`;
+            
+            if (seconds <= 0) {
+                clearInterval(timerInterval);
+                finishExam(true);
+            }
+            seconds--;
+        }, 1000);
+    }
+
+    function finishExam(timeOut = false) {
+        clearInterval(timerInterval);
+        stopAudio();
+        if(timeOut) {
+            alert("الوقت خلص! القلم من إيدك يا أستاذ.");
+        } else {
+            alert("عاش يا وحش، تم تسليم الورقة! راجع الإجابات اللي تحت بقى.");
+        }
+        document.getElementById('submitBtn').classList.add('hidden');
+    }
+
+    function stopAudio() {
+        let audio = document.getElementById('hypeMusic');
+        audio.pause();
+        audio.currentTime = 0;
+    }
+</script>
+
+</body>
+</html>
