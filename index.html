@@ -19,6 +19,7 @@
         .hidden { display: none; }
         .result-box { background-color: #2f3542; padding: 20px; border-radius: 10px; margin-top: 20px; text-align: right; line-height: 1.8; font-size: 16px; overflow-wrap: break-word; }
         .timer { font-size: 24px; color: #ff4757; font-weight: bold; margin: 15px 0; text-align: center;}
+        .error-log { color: #ff6b81; font-family: monospace; text-align: left; direction: ltr; margin-top: 10px; font-size: 14px; background: #121212; padding: 10px; border-radius: 5px; overflow-x: auto; }
     </style>
 </head>
 <body>
@@ -27,7 +28,7 @@
     <h2>🚀 شقلبلي المنهج</h2>
     <p>ارفع ملفك واختار عايز إيه بالظبط</p>
     
-    <label for="studyFile" class="custom-file-upload" id="fileLabel">📁 اضغط هنا عشان ترفع الملف (PDF/TXT)</label>
+    <label for="studyFile" class="custom-file-upload" id="fileLabel">📁 اضغط هنا عشان ترفع الملف</label>
     <input type="file" id="studyFile" accept=".pdf, .txt" onchange="document.getElementById('fileLabel').innerText = '✅ تم اختيار: ' + this.files[0].name">
     <br>
     
@@ -57,7 +58,7 @@
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
     // حط المفتاح بتاعك هنا بين علامات التنصيص
-    const API_KEY = "AQ.Ab8RN6LwOYni-vQA5KW4AZuBiM7WSYvLQ9mdnVI_B-GCAwbHqw";
+    const API_KEY = "حط_المفتاح_بتاعك_هنا";
 
     let timerInterval;
 
@@ -110,17 +111,16 @@
             if (action === 'exam') {
                 document.getElementById('timerDisplay').classList.remove('hidden');
                 document.getElementById('submitBtn').classList.remove('hidden');
-                
                 let diffLevel = document.getElementById('difficulty').value;
                 let time = diffLevel === 'سهل' ? 600 : diffLevel === 'متوسط' ? 300 : 120;
                 startTimer(time);
-                
                 let audio = document.getElementById('hypeMusic');
                 audio.play().catch(() => console.log("تحتاج أغنية باسم song.mp3 في الاستضافة"));
             }
 
         } catch (error) {
-            document.getElementById('contentArea').innerHTML = `<b style="color:red;">حصلت مشكلة: ${error.message}</b>`;
+            // هنا هنطبع مشكلة جوجل بالظبط
+            document.getElementById('contentArea').innerHTML = `<b style="color:#ff6b81;">حصلت مشكلة! دي تفاصيلها من جوجل:</b><div class="error-log">${error.message}</div>`;
         }
     }
 
@@ -149,22 +149,31 @@
         });
         
         const data = await response.json();
+        
+        if (!response.ok) {
+            let errorMsg = "HTTP Error " + response.status;
+            if (data.error && data.error.message) {
+                errorMsg += " - " + data.error.message;
+            } else {
+                errorMsg += " - " + JSON.stringify(data);
+            }
+            throw new Error(errorMsg);
+        }
+
         if (data.candidates && data.candidates.length > 0) {
             return data.candidates[0].content.parts[0].text;
         } else {
-            throw new Error("عدد محاولاتك خلصت");
+            throw new Error("جوجل ردت بس مفيش إجابة. التفاصيل: " + JSON.stringify(data));
         }
     }
 
     function startTimer(seconds) {
         clearInterval(timerInterval);
         let timerDisplay = document.getElementById('timerDisplay');
-        
         timerInterval = setInterval(() => {
             let min = Math.floor(seconds / 60);
             let sec = seconds % 60;
             timerDisplay.innerText = `الوقت: ${min < 10 ? '0':''}${min}:${sec < 10 ? '0':''}${sec}`;
-            
             if (seconds <= 0) {
                 clearInterval(timerInterval);
                 finishExam(true);
@@ -177,9 +186,9 @@
         clearInterval(timerInterval);
         stopAudio();
         if(timeOut) {
-            alert("الوقت خلص! القلم من إيدك يا أستاذ.");
+            alert("الوقت خلص! القلم من إيدك.");
         } else {
-            alert("عاش يا وحش، تم تسليم الورقة! راجع الإجابات اللي تحت بقى.");
+            alert("تم التسليم! راجع الإجابات اللي تحت.");
         }
         document.getElementById('submitBtn').classList.add('hidden');
     }
