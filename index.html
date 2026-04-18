@@ -7,106 +7,171 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         :root { --primary: #3742fa; --success: #2ed573; --danger: #ff4757; --bg: #0a0a12; --card: #1e1e2f; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: #ffffff; text-align: center; padding: 20px; margin: 0; }
-        .container { background-color: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.7); max-width: 700px; margin: auto; border: 1px solid var(--primary); }
-        .motivational { font-style: italic; color: #ff9f43; margin-bottom: 20px; font-size: 1.1rem; font-weight: bold; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: #fff; margin: 0; overflow-x: hidden; }
+        .container { padding: 30px; max-width: 700px; margin: auto; text-align: center; }
+        
+        /* تصميم الصفحة الثانية */
+        #sub-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 100; display: none; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .close-btn { position: absolute; top: 20px; left: 20px; background: var(--danger); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        .card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--primary); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .btn { border: none; padding: 15px 30px; border-radius: 12px; cursor: pointer; font-size: 16px; margin: 10px; font-weight: bold; color: white; transition: 0.3s; }
+        .btn-summary { background: var(--success); }
+        .btn-exam { background: var(--danger); }
+        .btn:hover { transform: scale(1.05); }
+
+        /* ستايل الأسئلة التفاعلية */
+        .question-card { background: #2f3542; padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: right; }
+        .option { display: block; background: #3d4451; padding: 12px; margin: 8px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .option:hover { background: #4b5563; }
+        .option.selected { border-color: var(--primary); background: #3742fa55; }
+        .option.correct { background: #2ed57355; border-color: var(--success); }
+        .option.wrong { background: #ff475755; border-color: var(--danger); }
+
         .key-box { background: #2d3436; padding: 15px; border-radius: 12px; border: 1px dashed var(--success); margin-bottom: 20px; }
-        .key-text { color: var(--success); font-family: monospace; font-weight: bold; user-select: all; cursor: pointer; background: #000; padding: 8px; border-radius: 5px; display: block; overflow-wrap: break-word; font-size: 0.85rem; }
-        .custom-file-upload { display: inline-block; padding: 15px 30px; cursor: pointer; background-color: var(--primary); color: white; border-radius: 12px; font-weight: bold; margin-bottom: 20px; border: 2px dashed #ffffff; transition: 0.3s; }
-        .btn { border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 16px; margin: 10px; font-weight: bold; transition: 0.3s; color: white; }
-        .btn-summary { background-color: var(--success); }
-        .btn-exam { background-color: var(--danger); box-shadow: 0 0 15px rgba(255, 71, 87, 0.4); }
-        .result-box { background-color: #2f3542; padding: 25px; border-radius: 15px; margin-top: 25px; text-align: right; line-height: 1.8; font-size: 1.1rem; white-space: pre-wrap; }
         .hidden { display: none; }
-        input[type="text"] { width: 85%; padding: 12px; border-radius: 8px; border: 1px solid var(--primary); background: #000; color: #fff; margin-bottom: 15px; text-align: center; }
-        footer { margin-top: 30px; font-size: 0.8rem; color: #777; }
+        #score-view { font-size: 2rem; color: var(--success); margin-top: 30px; }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="home">
     <h1 style="color: var(--primary);">🚀 منصة زنقة الكلاب</h1>
-    <p>بواسطة: <span style="color: var(--success); font-weight: bold;">محمود جمال</span></p>
-    <div class="motivational" id="quote">"الامتياز مش بعيد.. ركز يا دحيح!"</div>
+    <p>بواسطة المبدع: <span style="color: var(--success); font-weight: bold;">محمود جمال</span></p>
     
     <div id="setup">
         <div class="key-box">
-            <p style="margin-top:0; font-size: 0.9rem;">🔑 كود التفعيل (انسخه وحطه تحت):</p>
-            <span class="key-text">AIzaSyBoY4hFrj7PGQeTwxv0BM2YxMNhb5G8950</span>
+            <p>🔑 كود التفعيل (انسخه وحطه تحت):</p>
+            <span style="color:var(--success); font-family:monospace; user-select:all;">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</span>
         </div>
-        <input type="text" id="userKey" placeholder="حط الكود هنا يا بطل...">
-        <br>
-        <button class="btn" style="background: var(--primary)" onclick="saveKey()">تفعيل وتشغيل ⚡</button>
+        <input type="text" id="userKey" placeholder="حط الكود هنا..." style="width:80%; padding:12px; border-radius:8px; background:#000; color:#fff; border:1px solid var(--primary);">
+        <br><button class="btn" style="background:var(--primary)" onclick="activate()">تفعيل ⚡</button>
     </div>
 
     <div id="main" class="hidden">
-        <label for="fileInput" class="custom-file-upload" id="label">📁 ارفع المحاضرة (PDF)</label>
-        <input type="file" id="fileInput" accept=".pdf" style="display:none" onchange="ready(this)">
+        <label for="fileInput" style="cursor:pointer; background:var(--primary); padding:15px; border-radius:10px; display:inline-block; margin-bottom:20px;">📁 ارفع المحاضرة (PDF)</label>
+        <input type="file" id="fileInput" accept=".pdf" style="display:none" onchange="ready()">
         <br>
-        <button class="btn btn-summary" onclick="go('summary')">لخصلي المنهج</button>
-        <button class="btn btn-exam" onclick="go('exam')">امتحنني MCQ 🎵</button>
-        <p style="font-size: 11px; color: #666; cursor: pointer;" onclick="localStorage.clear(); location.reload();">تغيير المفتاح</p>
+        <button class="btn btn-summary" onclick="start('summary')">لخصلي المنهج</button>
+        <button class="btn btn-exam" onclick="start('exam')">امتحان تفاعلي 🎵</button>
     </div>
-
-    <audio id="music" src="song.mp3" loop></audio>
-
-    <div id="res" class="hidden result-box">
-        <h3 id="head" style="color: var(--success);">⏳ جاري المعالجة...</h3>
-        <hr style="border-color: #444;">
-        <div id="content"></div>
-    </div>
-    <footer>محمود جمال © 2026</footer>
 </div>
+
+<div id="sub-page">
+    <div class="close-btn" onclick="closeSubPage()">رجوع 🔙</div>
+    <div style="margin-top: 60px;" id="sub-content">
+        <h2 id="sub-title">جاري التحميل...</h2>
+        <div id="loader" style="font-size: 1.2rem;">بفكرلك في المحاضرة.. ثواني.. 🧠</div>
+        <div id="display-area"></div>
+        <div id="score-view" class="hidden"></div>
+    </div>
+</div>
+
+<audio id="music" src="song.mp3" loop></audio>
 
 <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    window.onload = () => { if(localStorage.getItem('k')) { document.getElementById('setup').classList.add('hidden'); document.getElementById('main').classList.remove('hidden'); } };
-    function saveKey() { const val = document.getElementById('userKey').value.trim(); if(val.length > 20) { localStorage.setItem('k', val); location.reload(); } }
-    function ready(el) { if(el.files.length > 0) { document.getElementById('label').innerText = '✅ جاهز: ' + el.files[0].name; const m = document.getElementById('music'); m.play().then(() => m.pause()); } }
+    function activate() { 
+        const v = document.getElementById('userKey').value.trim(); 
+        if(v.startsWith('gsk_')) { localStorage.setItem('k', v); location.reload(); } 
+    }
 
-    async function go(mode) {
+    window.onload = () => { if(localStorage.getItem('k')) { document.getElementById('setup').classList.add('hidden'); document.getElementById('main').classList.remove('hidden'); } };
+
+    function ready() { alert("المحاضرة جاهزة للتشريح! 🚀"); }
+    function closeSubPage() { 
+        document.getElementById('sub-page').style.display = 'none'; 
+        document.getElementById('music').pause();
+        document.getElementById('display-area').innerHTML = '';
+        document.getElementById('score-view').classList.add('hidden');
+    }
+
+    async function start(mode) {
         const input = document.getElementById('fileInput');
         if(input.files.length === 0) { alert("فين الملف؟"); return; }
-        
-        document.getElementById('res').classList.remove('hidden');
-        const content = document.getElementById('content');
-        content.innerHTML = "جاري قراءة الملف وتجربة الموديلات المتاحة.. ثواني.. 🧠";
+
+        document.getElementById('sub-page').style.display = 'block';
+        document.getElementById('sub-title').innerText = mode === 'summary' ? "📝 ملخص محمود جمال" : "✍️ امتحان التحدي";
+        document.getElementById('display-area').innerHTML = '';
         
         if(mode === 'exam') document.getElementById('music').play().catch(() => {});
 
         try {
             const pdf = await pdfjsLib.getDocument({data: await input.files[0].arrayBuffer()}).promise;
             let text = "";
-            for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) { text += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " "; }
-
-            const prompt = mode === 'summary' ? `لخص هذا النص في نقاط واضحة ومنظمة بالعربية:\n\n${text.substring(0, 10000)}` : `قم بعمل 5 أسئلة MCQ بالاختيارات والإجابات بالعربية من هذا النص:\n\n${text.substring(0, 10000)}`;
-            const key = localStorage.getItem('k');
-            
-            // مصفوفة الموديلات والروابط لتجربة الكل
-            const attempts = [
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
-                `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`,
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`
-            ];
-
-            let success = false;
-            for (let url of attempts) {
-                try {
-                    const res = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({contents: [{parts: [{text: prompt}]}]}) });
-                    const data = await res.json();
-                    if (res.ok) {
-                        content.innerText = data.candidates[0].content.parts[0].text;
-                        document.getElementById('head').innerText = mode === 'summary' ? "📝 الملخص:" : "✍️ الامتحان:";
-                        success = true; break;
-                    }
-                } catch (e) { console.log("محاولة فاشلة، بنجرب اللي بعدها..."); }
+            for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+                text += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " ";
             }
 
-            if (!success) throw new Error("كل محاولات الاتصال فشلت. تأكد من إعدادات API في Google Cloud.");
+            const prompt = mode === 'summary' ? 
+                `لخص النص بأسلوب نقاط شامل وممتاز بالعربية:\n${text.substring(0, 10000)}` :
+                `قم بعمل 10 أسئلة MCQ من النص التالي. أجب فقط بصيغة JSON كالتالي: [{"q": "السؤال", "options": ["اختيار1", "اختيار2", "اختيار3", "اختيار4"], "correct": 0}]. النص: ${text.substring(0, 10000)}`;
 
-        } catch (err) { content.innerHTML = `<b style="color:red">عطل:</b> ${err.message}`; document.getElementById('music').pause(); }
+            const key = localStorage.getItem('k');
+            const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [{ role: "user", content: prompt }], model: "llama-3.3-70b-versatile" })
+            });
+
+            const data = await res.json();
+            const output = data.choices[0].message.content;
+
+            if (mode === 'summary') {
+                document.getElementById('display-area').innerHTML = `<div class="card" style="text-align:right; line-height:1.8;">${output.replace(/\n/g, '<br>')}</div>`;
+            } else {
+                renderExam(JSON.parse(output.match(/\[.*\]/s)[0]));
+            }
+        } catch (e) { document.getElementById('display-area').innerHTML = "حصل خطأ: " + e.message; }
+    }
+
+    function renderExam(questions) {
+        const area = document.getElementById('display-area');
+        area.innerHTML = '';
+        let userAnswers = new Array(questions.length).fill(null);
+
+        questions.forEach((q, qIdx) => {
+            const qDiv = document.createElement('div');
+            qDiv.className = 'question-card';
+            qDiv.innerHTML = `<b>${qIdx + 1}. ${q.q}</b>`;
+            
+            q.options.forEach((opt, oIdx) => {
+                const optDiv = document.createElement('div');
+                optDiv.className = 'option';
+                optDiv.innerText = opt;
+                optDiv.onclick = () => {
+                    if(userAnswers[qIdx] !== null) return;
+                    userAnswers[qIdx] = oIdx;
+                    const options = qDiv.querySelectorAll('.option');
+                    options.forEach(el => el.classList.remove('selected'));
+                    optDiv.classList.add('selected');
+                };
+                qDiv.appendChild(optDiv);
+            });
+            area.appendChild(qDiv);
+        });
+
+        const submitBtn = document.createElement('button');
+        submitBtn.className = 'btn';
+        submitBtn.style.background = 'var(--success)';
+        submitBtn.innerText = 'تصحيح الامتحان ✔️';
+        submitBtn.onclick = () => {
+            let score = 0;
+            questions.forEach((q, i) => {
+                const opts = area.children[i].querySelectorAll('.option');
+                opts[q.correct].classList.add('correct');
+                if(userAnswers[i] === q.correct) score++;
+                else if(userAnswers[i] !== null) opts[userAnswers[i]].classList.add('wrong');
+            });
+            const scoreView = document.getElementById('score-view');
+            scoreView.innerText = `درجتك هي: ${score} من ${questions.length}`;
+            scoreView.classList.remove('hidden');
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+        area.appendChild(submitBtn);
     }
 </script>
+
 </body>
 </html>
