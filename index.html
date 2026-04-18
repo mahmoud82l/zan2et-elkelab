@@ -34,9 +34,9 @@
     
     <label>مستوى الامتحان:</label>
     <select id="difficulty">
-        <option value="سهل">سهل (يا دوب بنسخن)</option>
-        <option value="متوسط" selected>متوسط (طالب جامد)</option>
-        <option value="صعب جدا">صعب (تحدي الدحيحة)</option>
+        <option value="سهل">سهل</option>
+        <option value="متوسط" selected>متوسط</option>
+        <option value="صعب جدا">صعب</option>
     </select>
     <br>
 
@@ -56,10 +56,9 @@
 <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    // تم تشفير المفتاح الجديد لضمان عدم تعطيله من GitHub
-        const encodedKey = "QVEuQWI4Uk42STE5U2pPelkzS1ZEcHRxdVNzbEdid3Z4RHNZNnNnYy0tRFB2aWw5U1VXRGc=";
+    // المفتاح المشفر اللي إنت بعته
+    const encodedKey = "QVEuQWI4Uk42STE5U2pPelkzS1ZEcHRxdVNzbEdid3Z4RHNZNnNnYy0tRFB2aWw5U1VXRGc=";
     const API_KEY = atob(encodedKey);
-
 
     let timerInterval;
 
@@ -89,8 +88,8 @@
 
             const textSnippet = text.substring(0, 10000); 
             let prompt = action === 'summary' ? 
-                `لخص هذا النص الأكاديمي بشكل مبسط ومنظم في نقاط باللغة العربية:\n\n${textSnippet}` :
-                `قم بعمل امتحان اختيارات (5 أسئلة) باللغة العربية بناءً على هذا النص:\n\n${textSnippet}`;
+                `أنت مساعد دراسي، لخص النص التالي بأسلوب نقاط منظم وباللغة العربية:\n\n${textSnippet}` :
+                `قم بعمل 5 أسئلة اختيار من متعدد بناءً على النص التالي باللغة العربية مع ذكر الإجابات في الآخر:\n\n${textSnippet}`;
 
             const responseText = await fetchGeminiAPI(prompt);
             document.getElementById('contentArea').innerHTML = responseText.replace(/\n/g, '<br>');
@@ -99,7 +98,6 @@
                 document.getElementById('timerDisplay').classList.remove('hidden');
                 document.getElementById('submitBtn').classList.remove('hidden');
                 startTimer(300);
-                document.getElementById('hypeMusic').play().catch(() => {});
             }
         } catch (error) {
             document.getElementById('contentArea').innerHTML = `<b style="color:#ff6b81;">Error:</b><div class="error-log">${error.message}</div>`;
@@ -110,7 +108,7 @@
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
         let fullText = "";
-        for (let i = 1; i <= pdf.numPages && i <= 10; i++) { 
+        for (let i = 1; i <= pdf.numPages && i <= 5; i++) { 
             const page = await pdf.getPage(i);
             const textContent = await page.getTextContent();
             fullText += textContent.items.map(item => item.str).join(" ") + "\n";
@@ -119,8 +117,9 @@
     }
 
     async function fetchGeminiAPI(promptText) {
-        // استخدام النسخة المستقرة v1 وموديل gemini-pro
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
+        // تم استخدام الموديل gemini-1.5-flash كاسم أساسي وهو المعتمد في v1beta
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -128,12 +127,12 @@
         });
         
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error ? data.error.message : "خطأ غير معروف");
+        if (!response.ok) throw new Error(data.error ? data.error.message : "حدث خطأ في الاتصال بجوجل");
 
         if (data.candidates && data.candidates[0].content) {
             return data.candidates[0].content.parts[0].text;
         } else {
-            throw new Error("جوجل لم ترسل محتوى. تأكد من تفعيل الموديل.");
+            throw new Error("جوجل لم ترسل رد، جرب مرة أخرى.");
         }
     }
 
