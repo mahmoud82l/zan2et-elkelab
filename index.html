@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة زنقة الكلاب - محمود جمال</title>
+    <title>zn8h alklab</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
         :root { --primary: #3742fa; --success: #2ed573; --danger: #ff4757; --bg: #0a0a12; --card: #1e1e2f; --chat-ai: #2d3436; --chat-user: #3742fa; }
@@ -16,42 +16,46 @@
         .btn:hover { transform: scale(1.02); opacity: 0.9; }
         .hidden { display: none !important; }
         .file-label { display: block; background: var(--primary); padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; border: 2px dashed #fff; }
-        input[type="text"] { width: 90%; padding: 12px; border-radius: 8px; border: 1px solid var(--primary); background: #000; color: #fff; text-align: center; margin-bottom: 15px; }
+        input[type="text"], input[type="number"], select { width: 90%; padding: 12px; border-radius: 8px; border: 1px solid var(--primary); background: #000; color: #fff; text-align: center; margin-bottom: 15px; font-family: inherit; }
         
-        /* ------------------ واجهة الشات المنفصلة (ChatGPT Style) ------------------ */
+        /* لوحة تحكم الامتحان */
+        .controls-box { background: #12151e; border: 1px solid #3d4451; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: right; font-size: 14px; }
+        .controls-box label { display: inline-block; margin-right: 10px; color: #aaa; }
+        .controls-box input[type="number"], .controls-box select { width: auto; display: inline-block; padding: 8px; margin: 0 5px 10px 0; }
+
+        /* واجهة الشات المنفصلة */
         #chatPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; text-align: right; }
         .chat-header { background: var(--card); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary); }
         .chat-header h2 { margin: 0; font-size: 1.2rem; color: var(--success); }
         .back-btn { background: var(--danger); border: none; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        
         .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
         .msg-row { display: flex; width: 100%; }
-        .msg-row.user { justify-content: flex-start; } /* User on right for RTL */
-        .msg-row.ai { justify-content: flex-end; } /* AI on left for RTL */
-        
+        .msg-row.user { justify-content: flex-start; } 
+        .msg-row.ai { justify-content: flex-end; } 
         .msg-bubble { max-width: 85%; padding: 15px 20px; border-radius: 15px; line-height: 1.8; font-size: 16px; word-wrap: break-word; }
         .msg-bubble.user { background: var(--chat-user); color: #fff; border-top-right-radius: 0; }
         .msg-bubble.ai { background: var(--chat-ai); color: #e0e0e0; border-top-left-radius: 0; border: 1px solid #444; }
         .msg-bubble a { color: #74b9ff; text-decoration: underline; font-weight: bold; }
-        .msg-bubble b { color: #fff; }
-
         .chat-input-area { background: var(--card); padding: 15px; display: flex; gap: 10px; border-top: 1px solid #333; }
-        .chat-input-area input { flex: 1; margin: 0; width: auto; text-align: right; font-size: 16px; padding: 15px; border-radius: 12px; }
+        .chat-input-area input { flex: 1; margin: 0; width: auto; text-align: right; border-radius: 12px; }
         .chat-input-area button { width: auto; margin: 0; padding: 15px 25px; background: var(--success); border-radius: 12px; }
         
-        /* ------------------ ستايل الامتحان القديم ------------------ */
+        /* ستايل الامتحان */
         .q-box { background: #1e1e2f; border: 1px solid #3d4451; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: right; }
         .opt-btn { display: block; width: 100%; text-align: right; padding: 12px; margin: 8px 0; background: #3d4451; border: 1px solid #555; border-radius: 8px; color: #fff; cursor: pointer; font-size: 15px; }
         .correct { background: var(--success) !important; font-weight: bold; }
         .wrong { background: var(--danger) !important; }
         #score-board { font-size: 1.8rem; font-weight: bold; color: var(--success); margin: 20px 0; padding: 15px; border: 2px solid var(--success); border-radius: 12px; background: rgba(46, 213, 115, 0.1); }
+        
+        /* صندوق الدعم */
+        .support-box { margin-top: 40px; padding: 15px; background: #1a1a1a; border-radius: 12px; border: 1px dashed #555; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container" id="homePage">
-    <h1 style="color: var(--primary); margin: 0 0 10px 0;">🚀 زنقة الكلاب </h1>
-    <p style="margin-bottom: 20px;">تطوير : <span style="color: var(--success); font-weight: bold;">محمود جمال</span></p>
+    <h1 style="color: var(--primary); margin: 0 0 10px 0;">🚀 zn8h alklab</h1>
+    <p style="margin-bottom: 20px; font-size: 14px; color: #bbb;">Designed by: <span style="color: var(--success); font-weight: bold;">Mahmoud Gamal</span></p>
 
     <div id="setupSection">
         <div style="background:#2d3436; padding:15px; border-radius:12px; border:1px dashed var(--success); margin-bottom:15px;">
@@ -64,13 +68,25 @@
     </div>
 
     <div id="mainApp" class="hidden">
-        <div id="quote" style="font-style:italic; color:#ff9f43; margin-bottom:20px; font-weight:bold;">"عاش يا دحيح.. الامتياز محجوز ليك! 🚀"</div>
-        
         <label for="pdfInput" class="file-label" id="fileLabel">📁 اضغط هنا واختار المحاضرة (PDF)</label>
         <input type="file" id="pdfInput" accept=".pdf" style="display:none">
         
+        <div class="controls-box">
+            <h4 style="margin: 0 0 10px 0; color: var(--success);">⚙️ إعدادات الامتحان:</h4>
+            <label>عدد الأسئلة:</label>
+            <input type="number" id="qCount" value="10" min="5" max="30">
+            <br>
+            <label>الصعوبة:</label>
+            <select id="qDiff">
+                <option value="سهل ومباشر">سهل مباشر</option>
+                <option value="متوسط يشمل فهم وتذكر" selected>متوسط</option>
+                <option value="صعب جداً وأسئلة استنتاجية خبيثة">صعب (تفكير عميق)</option>
+            </select>
+        </div>
+
+        <button class="btn btn-summary" onclick="startProcess('summary')">لخصلي المنهج (شامل)</button>
+        <button class="btn btn-exam" onclick="startProcess('exam')">امتحان تفاعلي 🎵</button>
         <button class="btn btn-chat" onclick="openChatMode()">💬 افتح شات المنهج (مفتوح)</button>
-        <button class="btn btn-exam" onclick="startProcess('exam')">امتحان شامل تفاعلي 🎵</button>
         
         <p style="font-size: 11px; color: #666; cursor: pointer; margin-top: 15px;" onclick="localStorage.clear(); location.reload();">تغيير المفتاح 🔑</p>
     </div>
@@ -82,25 +98,29 @@
         <div id="score-board" class="hidden"></div>
         <div id="resContent" style="text-align:right; line-height:1.8;"></div>
     </div>
+
+    <div class="support-box">
+        <h4 style="color: #ff9f43; margin-top: 0;">📩 تواصل مع المطور</h4>
+        <p style="font-size: 12px; color: #aaa;">لو قابلك أي عطل أو عندك اقتراح، ابعتلي هنا:</p>
+        <input type="text" id="contactMsg" placeholder="اكتب رسالتك..." style="width: 100%; box-sizing: border-box;">
+        <button onclick="sendToSupport()" class="btn" style="background: #25D366; width: auto; padding: 10px 20px; font-size: 14px;">إرسال عبر واتساب 💬</button>
+    </div>
 </div>
 
 <div id="chatPage" class="hidden">
     <div class="chat-header">
-        <h2>💬 شات المنهج - دكتور الـ AI</h2>
+        <h2>💬 دكتور المادة (AI)</h2>
         <button class="back-btn" onclick="closeChatMode()">🔙 رجوع</button>
     </div>
-    
-    <div class="chat-messages" id="chatBox">
-        </div>
-    
+    <div class="chat-messages" id="chatBox"></div>
     <div class="chat-input-area">
-        <input type="text" id="chatMsg" placeholder="اسأل في أي حاجة، اطلب أسئلة، أو روابط ومصادر..." onkeypress="if(event.key === 'Enter') sendChat()">
+        <input type="text" id="chatMsg" placeholder="اسأل، اطلب أسئلة، أو مصادر خارجية..." onkeypress="if(event.key === 'Enter') sendChat()">
         <button class="btn" style="margin:0; padding:10px 20px;" onclick="sendChat()">إرسال 🚀</button>
     </div>
 </div>
 
 <script>
-    // --- درع الحماية الفولاذي لمحمود جمال ---
+    // --- الحماية الفولاذية ---
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
         if (e.keyCode == 123) return false;
@@ -108,7 +128,7 @@
         if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'S'.charCodeAt(0))) return false;
     };
     (function(){ setInterval(function(){ debugger; }, 100); })();
-    // ----------------------------------------
+    // -------------------------
 
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
@@ -116,19 +136,26 @@
     let chatHistory = []; 
 
     function copyMyKey() {
-        const txt = document.getElementById('keyToCopy').innerText;
-        navigator.clipboard.writeText(txt);
-        alert("تم نسخ الكود بنجاح يا بطل!");
+        navigator.clipboard.writeText(document.getElementById('keyToCopy').innerText);
+        alert("تم نسخ الكود بنجاح!");
+    }
+
+    // رقمك هنا يا حودة (حط رقمك الحقيقي بالصيغة الدولية بدون +)
+    function sendToSupport() {
+        const msg = document.getElementById('contactMsg').value.trim();
+        if(!msg) return alert("اكتب رسالة الأول يا بطل!");
+        const phoneNumber = "201000000000"; // <--- غير الرقم ده لرقمك
+        window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent("رسالة من منصة zn8h alklab: \n" + msg)}`, '_blank');
     }
 
     document.getElementById('pdfInput').onchange = function() {
-        if(this.files[0]) document.getElementById('fileLabel').innerText = "✅ تم تحميل: " + this.files[0].name;
+        if(this.files[0]) document.getElementById('fileLabel').innerText = "✅ تم التحميل: " + this.files[0].name;
     };
 
     function activate() {
         const k = document.getElementById('userInputKey').value.trim();
         if(k.startsWith('gsk_')) { localStorage.setItem('groq_key', k); location.reload(); }
-        else { alert("الكود غلط يا حودة.. اتأكد إنه بيبدأ بـ gsk_"); }
+        else { alert("الكود غلط.. لازم يبدأ بـ gsk_"); }
     }
 
     window.onload = () => {
@@ -138,29 +165,23 @@
         }
     };
 
-    // --- دالة تحويل النصوص (Markdown & Links Parser) ---
     function formatText(text) {
-        // تحويل **نص** إلى Bold
         text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-        // تحويل الروابط لنصوص قابلة للضغط
         text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
-        // تحويل النزول لسطر جديد
         text = text.replace(/\n/g, '<br>');
         return text;
     }
 
-    // --- فتح الشات المفتوح (ChatGPT Style) ---
     async function openChatMode() {
         const fileInput = document.getElementById('pdfInput');
-        if(!fileInput.files[0]) { alert("فين المحاضرة يا دحيح؟"); return; }
+        if(!fileInput.files[0]) return alert("ارفع المحاضرة الأول!");
         
         document.getElementById('homePage').classList.add('hidden');
         document.getElementById('chatPage').classList.remove('hidden');
         const chatBox = document.getElementById('chatBox');
         
-        // لو دي أول مرة يفتح الشات
         if (chatHistory.length === 0) {
-            chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">جاري قراءة المحاضرة عشان أبقى جاهز.. ثواني ⏳</div></div>`;
+            chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">بقرأ المحاضرة.. ثواني ⏳</div></div>`;
             try {
                 const arrayBuffer = await fileInput.files[0].arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
@@ -171,12 +192,12 @@
                 
                 chatHistory = [{ 
                     role: "system", 
-                    content: `أنت مساعد ذكي للمذاكرة. هذا نص المحاضرة: ${globalPdfText.substring(0, 15000)}. أجب على الطالب بأسلوب احترافي وواضح. قم بتنسيق الإجابة باستخدام النجوم العريضة **للعناوين**. إذا طلب معلومات إضافية أو مصادر، قم بتوفير روابط حقيقية (URLs) لمواقع موثوقة.` 
+                    content: `أنت دكتور جامعي خبير ومرشد أكاديمي ذكي. هذا هو نص المحاضرة: ${globalPdfText.substring(0, 15000)}. مهمتك مساعدة الطالب على فهم المنهج بعمق. أجب بأسلوب احترافي، دقيق، ومبسط. استخدم الأمثلة، ونسق إجاباتك بالعناوين العريضة، وقدم مصادر وروابط حقيقية إذا طلب منك.` 
                 }];
                 
-                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">أهلاً يا بطل! أنا قريت المحاضرة وحفظتها. تقدر تطلب مني <b>تلخيص</b>، <b>أسئلة معينة</b>، أو <b>أشرحلك جزء</b>، ولو عايز <b>لينكات خارجية للمصادر</b> اطلبها! 🚀</div></div>`;
+                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">أهلاً بيك! أنا دكتور المادة، قريت المحاضرة وجاهز. تقدر تسألني في أي جزء مش فاهمه، أو أطلب مني أسئلة بمستويات معينة! 🚀</div></div>`;
             } catch(e) {
-                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai" style="background:var(--danger)">حصل خطأ في قراءة الملف: ${e.message}</div></div>`;
+                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai" style="background:var(--danger)">عطل في القراءة: ${e.message}</div></div>`;
             }
         }
     }
@@ -186,7 +207,6 @@
         document.getElementById('homePage').classList.remove('hidden');
     }
 
-    // --- إرسال واستقبال الشات ---
     async function sendChat() {
         const inputField = document.getElementById('chatMsg');
         const msgText = inputField.value.trim();
@@ -200,50 +220,56 @@
         chatHistory.push({ role: "user", content: msgText });
 
         const loadingId = "load-" + Date.now();
-        chatBox.innerHTML += `<div id="${loadingId}" class="msg-row ai"><div class="msg-bubble ai">بكتب الرد... ✍️</div></div>`;
+        chatBox.innerHTML += `<div id="${loadingId}" class="msg-row ai"><div class="msg-bubble ai">بجهز الرد... ✍️</div></div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
 
         try {
             const key = localStorage.getItem('groq_key');
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ messages: chatHistory, model: "llama-3.3-70b-versatile", temperature: 0.7 })
             });
             const data = await response.json();
             const aiReply = data.choices[0].message.content;
 
             document.getElementById(loadingId).remove();
-            
-            // استخدام دالة التنسيق السحرية (Bold, Links, Newlines)
-            const formattedReply = formatText(aiReply);
-            
-            chatBox.innerHTML += `<div class="msg-row ai"><div class="msg-bubble ai">${formattedReply}</div></div>`;
+            chatBox.innerHTML += `<div class="msg-row ai"><div class="msg-bubble ai">${formatText(aiReply)}</div></div>`;
             chatHistory.push({ role: "assistant", content: aiReply });
             chatBox.scrollTop = chatBox.scrollHeight;
-
         } catch(e) {
             document.getElementById(loadingId).remove();
             chatBox.innerHTML += `<div class="msg-row ai"><div class="msg-bubble ai" style="background:var(--danger)">عطل في الاتصال ❌</div></div>`;
         }
     }
 
-    // --- الامتحان التفاعلي القديم (زي ما هو) ---
     async function startProcess(mode) {
-        if(mode === 'exam') {
-            const fileInput = document.getElementById('pdfInput');
-            if(!fileInput.files[0]) { alert("فين المحاضرة يا دحيح؟"); return; }
-            document.getElementById('resBox').classList.remove('hidden');
-            document.getElementById('resContent').innerHTML = "<b>جاري تجهيز الامتحان.. 🧠</b>";
-            document.getElementById('examMusic').play().catch(()=>{});
-            
-            try {
-                const arrayBuffer = await fileInput.files[0].arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-                let text = "";
-                for (let i = 1; i <= Math.min(pdf.numPages, 12); i++) { text += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " "; }
-                
-                const prompt = `قم بعمل امتحان شامل (10 أسئلة) MCQ من النص. التنسيق:
+        const fileInput = document.getElementById('pdfInput');
+        if(!fileInput.files[0]) return alert("ارفع المحاضرة!");
+
+        const resBox = document.getElementById('resBox');
+        const resContent = document.getElementById('resContent');
+        const music = document.getElementById('examMusic');
+        const scoreBoard = document.getElementById('score-board');
+        
+        resBox.classList.remove('hidden');
+        scoreBoard.classList.add('hidden');
+        resContent.innerHTML = "<b>جاري التحليل... 🧠</b>";
+        
+        if(mode === 'exam') music.play().catch(() => {}); else { music.pause(); music.currentTime = 0; }
+
+        try {
+            const arrayBuffer = await fileInput.files[0].arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            let text = "";
+            for (let i = 1; i <= Math.min(pdf.numPages, 12); i++) { text += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " "; }
+
+            // جلب الإعدادات من لوحة التحكم
+            const qCount = document.getElementById('qCount').value;
+            const qDiff = document.getElementById('qDiff').value;
+
+            const prompt = mode === 'summary' ? 
+                `أنت أستاذ جامعي خبير. قم بعمل ملخص أكاديمي دقيق وشامل للنص التالي. قسم الملخص إلى عناوين رئيسية واضحة، وضع تحت كل عنوان أهم النقاط بأسلوب علمي مبسط يسهل فهمه وحفظه:\n${text.substring(0, 15000)}` :
+                `قم بعمل امتحان MCQ مكون من (${qCount} أسئلة) بمستوى صعوبة (${qDiff}) من النص. التنسيق المطلوب بدقة:
                 Q: السؤال؟
                 A) اختيار 1
                 B) اختيار 2
@@ -252,21 +278,29 @@
                 Correct: الحرف الصحيح (A أو B أو C أو D)
                 النص: ${text.substring(0, 15000)}`;
 
-                const key = localStorage.getItem('groq_key');
-                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                    method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages: [{role:"user", content: prompt}], model: "llama-3.3-70b-versatile" })
-                });
-                const data = await response.json();
-                renderInteractiveExam(data.choices[0].message.content);
-            } catch (e) { document.getElementById('resContent').innerHTML = "❌ خطأ: " + e.message; }
-        }
+            const key = localStorage.getItem('groq_key');
+            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messages: [{ role: "user", content: prompt }], model: "llama-3.3-70b-versatile" })
+            });
+
+            const data = await response.json();
+            const output = data.choices[0].message.content;
+
+            if (mode === 'summary') {
+                document.getElementById('resTitle').innerText = "📝 الملخص الشامل:";
+                resContent.innerHTML = formatText(output);
+            } else {
+                renderInteractiveExam(output);
+            }
+        } catch (e) { resContent.innerHTML = "❌ خطأ: " + e.message; }
     }
 
     function renderInteractiveExam(text) {
-        document.getElementById('resTitle').innerText = "✍️ امتحان تفاعلي شامل:";
+        document.getElementById('resTitle').innerText = "✍️ امتحان التحدي:";
         const resContent = document.getElementById('resContent'); resContent.innerHTML = "";
-        const scoreBoard = document.getElementById('score-board'); scoreBoard.classList.add('hidden');
+        const scoreBoard = document.getElementById('score-board');
+        
         const qBlocks = text.split(/Q:/g).filter(b => b.trim().length > 15);
         let score = 0; let answered = 0;
 
@@ -287,7 +321,7 @@
                     if(qDiv.dataset.done) return; qDiv.dataset.done = "true"; answered++;
                     if(letter === correctLetter) { btn.classList.add('correct'); score++; }
                     else { btn.classList.add('wrong'); Array.from(qDiv.querySelectorAll('.opt-btn')).forEach(b => { if(b.innerText.startsWith(correctLetter)) b.classList.add('correct'); }); }
-                    if(answered === qBlocks.length) { scoreBoard.innerText = `النتيجة: ${score} من ${qBlocks.length} 🥳`; scoreBoard.classList.remove('hidden'); window.scrollTo({ top: scoreBoard.offsetTop, behavior: 'smooth' }); }
+                    if(answered === qBlocks.length) { scoreBoard.innerText = `درجتك: ${score} من ${qBlocks.length} 🥳`; scoreBoard.classList.remove('hidden'); window.scrollTo({ top: scoreBoard.offsetTop - 20, behavior: 'smooth' }); }
                 };
                 qDiv.appendChild(btn);
             });
