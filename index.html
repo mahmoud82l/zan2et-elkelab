@@ -6,55 +6,52 @@
     <title>منصة زنقة الكلاب - محمود جمال</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
-        :root { --primary: #3742fa; --success: #2ed573; --danger: #ff4757; --bg: #121212; --card: #1e1e2f; }
+        :root { --primary: #3742fa; --success: #2ed573; --danger: #ff4757; --bg: #0f0f1a; --card: #1e1e2f; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: #ffffff; text-align: center; padding: 20px; margin: 0; }
-        .container { background-color: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); max-width: 750px; margin: auto; border: 2px solid var(--primary); }
-        .motivational { font-style: italic; color: #ff9f43; margin-bottom: 20px; font-size: 1.2rem; min-height: 1.5em; }
-        .key-section { background: #2d3436; padding: 20px; border-radius: 12px; border: 1px dashed var(--success); margin-bottom: 20px; }
-        .key-text { color: var(--success); font-family: monospace; font-weight: bold; user-select: all; cursor: pointer; background: #000; padding: 5px 10px; border-radius: 4px; }
+        .container { background-color: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); max-width: 700px; margin: auto; border: 1px solid var(--primary); }
+        .motivational { font-style: italic; color: #ff9f43; margin-bottom: 20px; font-size: 1.1rem; min-height: 1.5em; font-weight: bold; }
+        .key-box { background: #2d3436; padding: 15px; border-radius: 12px; border: 1px dashed var(--success); margin-bottom: 20px; }
+        .key-text { color: var(--success); font-family: monospace; font-weight: bold; user-select: all; cursor: pointer; background: #000; padding: 5px 10px; border-radius: 4px; font-size: 0.9rem; }
         .custom-file-upload { display: inline-block; padding: 15px 30px; cursor: pointer; background-color: var(--primary); color: white; border-radius: 10px; font-weight: bold; margin-bottom: 20px; border: 2px dashed #ffffff; transition: 0.3s; }
-        .custom-file-upload:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(55, 66, 250, 0.4); }
         .btn { border: none; padding: 12px 25px; border-radius: 10px; cursor: pointer; font-size: 16px; margin: 10px; font-weight: bold; transition: 0.3s; color: white; }
         .btn-summary { background-color: var(--success); }
-        .btn-exam { background-color: var(--danger); }
-        .btn:hover { transform: scale(1.05); opacity: 0.9; }
-        .result-box { background-color: #2f3542; padding: 25px; border-radius: 15px; margin-top: 25px; text-align: right; line-height: 1.8; font-size: 1.1rem; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .btn-exam { background-color: var(--danger); box-shadow: 0 0 15px rgba(255, 71, 87, 0.4); }
+        .btn:hover { transform: scale(1.05); }
+        .result-box { background-color: #2f3542; padding: 25px; border-radius: 15px; margin-top: 25px; text-align: right; line-height: 1.8; font-size: 1.1rem; }
         .hidden { display: none; }
-        input[type="text"] { width: 85%; padding: 12px; border-radius: 8px; border: 1px solid var(--primary); background: #000; color: #fff; margin-bottom: 15px; text-align: center; }
-        hr { border: 0; border-top: 1px solid #3d3d5c; margin: 25px 0; }
+        input[type="text"] { width: 80%; padding: 12px; border-radius: 8px; border: 1px solid var(--primary); background: #000; color: #fff; margin-bottom: 15px; text-align: center; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1 style="margin-bottom: 5px;">🚀 منصة زنقة الكلاب</h1>
-    <p style="color: #aaa; margin-bottom: 20px;">النسخة الذهبية - تطوير المبدع: <b>محمود جمال</b></p>
+    <p style="color: #888; margin-bottom: 20px;">تطوير المبدع: <b>محمود جمال</b></p>
     <div class="motivational" id="quote">"عاش يا دحيح.. الامتياز بيناديك!"</div>
     
     <div id="setupSection">
-        <div class="key-section">
-            <p style="margin-top:0">🔑 انسخ كود التفعيل ده وحطه في الخانة اللي تحته:</p>
-            <span class="key-text" title="اضغط للنسخ">AIzaSyCFt_yR9jzNjNjNjNjNjNjNjNjNjNjNjNj</span>
-            <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">(لو المفتاح وقف، محمود هيغيره علطول)</p>
+        <div class="key-box">
+            <p style="margin-top:0">🔑 كود التفعيل للدفعة (انسخه وحطه تحت):</p>
+            <span class="key-text" id="displayKey">AIzaSyB_حط_مفتاحك_هنا</span>
         </div>
-        <input type="text" id="geminiKey" placeholder="حط كود التفعيل هنا يا وحش...">
+        <input type="text" id="userInputKey" placeholder="الصق كود التفعيل هنا...">
         <br>
-        <button class="btn" style="background: var(--primary)" onclick="startApp()">تفعيل ودخول ⚡</button>
+        <button class="btn" style="background: var(--primary)" onclick="saveKey()">تفعيل وتشغيل ⚡</button>
     </div>
 
-    <div id="appBody" class="hidden">
+    <div id="mainApp" class="hidden">
         <label for="studyFile" class="custom-file-upload" id="fileLabel">📁 ارفع المحاضرة (PDF)</label>
-        <input type="file" id="studyFile" accept=".pdf" style="display:none" onchange="handleFileSelect(this)">
+        <input type="file" id="studyFile" accept=".pdf" style="display:none" onchange="fileReady(this)">
         <br>
-        <button class="btn btn-summary" onclick="process('summary')">لخصلي المنهج</button>
-        <button class="btn btn-exam" onclick="process('exam')">امتحنني MCQ</button>
-        <p style="font-size: 0.8rem; color: #aaa; cursor: pointer; text-decoration: underline;" onclick="resetApp()">تغيير المفتاح</p>
+        <button class="btn btn-summary" onclick="start('summary')">لخصلي المنهج</button>
+        <button class="btn btn-exam" onclick="start('exam')">امتحنني MCQ 🎵</button>
+        <p style="font-size: 11px; color: #666; cursor: pointer;" onclick="localStorage.clear(); location.reload();">تغيير المفتاح</p>
     </div>
 
-    <audio id="examMusic" src="song.mp3" loop></audio>
+    <audio id="bgMusic" src="song.mp3" loop></audio>
 
     <div id="results" class="hidden result-box">
-        <h3 id="resHeader" style="color: var(--success); border-bottom: 1px solid #444; padding-bottom: 10px;">⏳ جاري التحضير...</h3>
+        <h3 id="resHeader" style="color: var(--success);">⏳ جاري المعالجة...</h3>
         <div id="resContent"></div>
     </div>
 </div>
@@ -62,73 +59,58 @@
 <script>
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    const quotes = [
-        "عاش يا دحيح.. الامتياز بيناديك!",
-        "مفيش مستحيل مع محمود جمال.. ركز يا بطل!",
-        "المنهج طويل بس إنت أطول منه 🚀",
-        "يا رب نخلص ونرتاح.. هانت يا وحش!",
-        "اللهم انفعنا بما علمتنا.. ركز يا دكتور!"
-    ];
+    const quotes = ["عاش يا دحيح!", "الامتياز محجوز لمحمود جمال وصحابه 🚀", "هانت يا بطل.. المنهج بيخلص!", "ركز.. مفيش وقت للصياح!", "اللهم لا سهل إلا ما جعلته سهلاً"];
     document.getElementById('quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
 
     window.onload = () => {
-        if (localStorage.getItem('gemini_token')) {
+        if (localStorage.getItem('user_gemini_key')) {
             document.getElementById('setupSection').classList.add('hidden');
-            document.getElementById('appBody').classList.remove('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
         }
     };
 
-    function startApp() {
-        const val = document.getElementById('geminiKey').value.trim();
-        if (val.length > 10) {
-            localStorage.setItem('gemini_token', val);
+    function saveKey() {
+        const k = document.getElementById('userInputKey').value.trim();
+        if (k.length > 20) {
+            localStorage.setItem('user_gemini_key', k);
             location.reload();
-        } else { alert("دخل المفتاح صح يا دحيح!"); }
+        } else { alert("دخل الكود صح يا وحش!"); }
     }
 
-    function resetApp() { localStorage.removeItem('gemini_token'); location.reload(); }
-
-    function handleFileSelect(input) {
-        if (input.files.length > 0) {
-            document.getElementById('fileLabel').innerText = '✅ جاهز: ' + input.files[0].name;
-            // تشغيل وهمي للصوت عشان المتصفح يسمح به لاحقاً
-            const audio = document.getElementById('examMusic');
-            audio.play().then(() => audio.pause());
-        }
+    function fileReady(el) {
+        if (el.files.length > 0) document.getElementById('fileLabel').innerText = '✅ جاهز: ' + el.files[0].name;
     }
 
-    async function process(type) {
+    async function start(mode) {
         const fileInput = document.getElementById('studyFile');
         if (fileInput.files.length === 0) { alert("فين الملف يا حودة؟"); return; }
 
-        const results = document.getElementById('results');
-        const content = document.getElementById('resContent');
-        const music = document.getElementById('examMusic');
+        const resDiv = document.getElementById('results');
+        const resContent = document.getElementById('resContent');
+        const music = document.getElementById('bgMusic');
         
-        results.classList.remove('hidden');
-        content.innerHTML = "<b>جاري قراءة الملف وطلب المساعدة من Gemini.. ثواني.. 🧠</b>";
+        resDiv.classList.remove('hidden');
+        resContent.innerHTML = "جاري قراءة الملف وطلب مساعدة Gemini.. استعنا على الشقا بالله.. 🧠";
         
-        if (type === 'exam') music.play().catch(e => console.log("Audio block"));
+        if (mode === 'exam') music.play().catch(() => {});
 
         try {
             const file = fileInput.files[0];
-            const arrayBuffer = await file.arrayBuffer();
+            const arrayBuffer = await file.buffer ? await file.buffer() : await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
             let text = "";
             for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
                 const page = await pdf.getPage(i);
-                const items = await page.getTextContent();
-                text += items.items.map(item => item.str).join(" ") + "\n";
+                const content = await page.getTextContent();
+                text += content.items.map(item => item.str).join(" ") + " ";
             }
 
-            const prompt = type === 'summary' ? 
-                `لخص النص الأكاديمي التالي في نقاط منظمة وواضحة جداً باللغة العربية:\n\n${text.substring(0, 10000)}` :
-                `بناءً على النص التالي، قم بعمل امتحان مكون من 5 أسئلة اختيار من متعدد (MCQ). لكل سؤال 4 اختيارات. اذكر الإجابات الصحيحة في نهاية الامتحان بشكل منفصل. النص:\n\n${text.substring(0, 10000)}`;
+            const prompt = mode === 'summary' ? 
+                `لخص النص الأكاديمي التالي في نقاط واضحة ومنظمة جداً باللغة العربية:\n\n${text.substring(0, 12000)}` :
+                `بناءً على النص التالي، قم بعمل امتحان 5 أسئلة اختيار من متعدد (MCQ) باللغة العربية. لكل سؤال 4 اختيارات (أ، ب، ج، د). وفي نهاية الرد، اكتب الإجابات الصحيحة لكل سؤال. النص:\n\n${text.substring(0, 12000)}`;
 
-            const key = localStorage.getItem('gemini_token');
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
-
-            const response = await fetch(url, {
+            const key = localStorage.getItem('user_gemini_key');
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
@@ -137,13 +119,13 @@
             const data = await response.json();
             if (data.error) throw new Error(data.error.message);
 
-            document.getElementById('resHeader').innerText = type === 'summary' ? "📝 ملخص المنهج:" : "✍️ امتحان التحدي:";
-            content.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+            document.getElementById('resHeader').innerText = mode === 'summary' ? "📝 ملخص المنهج:" : "✍️ امتحان MCQ (ركز يا دحيح):";
+            resContent.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
             
-            if (type === 'summary') { music.pause(); music.currentTime = 0; }
+            if (mode === 'summary') { music.pause(); music.currentTime = 0; }
 
         } catch (err) {
-            content.innerHTML = `<b style="color:var(--danger)">حصلت مشكلة:</b> ${err.message}`;
+            resContent.innerHTML = `<b style="color:var(--danger)">عطل فني:</b> ${err.message}. تأكد من صحة المفتاح.`;
             music.pause();
         }
     }
