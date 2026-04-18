@@ -9,15 +9,16 @@
         :root { --primary: #3742fa; --success: #2ed573; --danger: #ff4757; --bg: #0a0a12; --card: #1e1e2f; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 15px; text-align: center; }
         .container { max-width: 600px; margin: auto; background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--primary); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .btn { border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-size: 16px; margin: 8px; font-weight: bold; color: white; transition: 0.3s; width: 80%; }
+        .btn { border: none; padding: 15px; border-radius: 12px; cursor: pointer; font-size: 16px; margin: 10px 0; font-weight: bold; color: white; width: 90%; transition: 0.3s; }
         .btn-summary { background: var(--success); }
         .btn-exam { background: var(--danger); box-shadow: 0 0 15px rgba(255, 71, 87, 0.3); }
+        .btn:disabled { background: #555; cursor: not-allowed; }
         .q-box { background: #1e1e2f; border: 1px solid #3d4451; padding: 15px; border-radius: 12px; margin-bottom: 20px; text-align: right; }
-        .opt-btn { display: block; width: 100%; text-align: right; padding: 12px; margin: 8px 0; background: #3d4451; border: 1px solid #555; border-radius: 8px; color: #fff; cursor: pointer; font-size: 14px; }
+        .opt-btn { display: block; width: 100%; text-align: right; padding: 12px; margin: 8px 0; background: #3d4451; border: 1px solid #555; border-radius: 8px; color: #fff; cursor: pointer; }
         .correct { background: var(--success) !important; font-weight: bold; }
         .wrong { background: var(--danger) !important; }
         .hidden { display: none; }
-        #score-board { font-size: 1.5rem; font-weight: bold; color: var(--success); margin-bottom: 20px; padding: 15px; border: 2px solid var(--success); border-radius: 10px; background: rgba(46, 213, 115, 0.1); }
+        #status-msg { color: #ff9f43; font-weight: bold; margin: 10px 0; font-size: 14px; }
         .file-label { display: block; background: var(--primary); padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 15px; border: 2px dashed #fff; }
     </style>
 </head>
@@ -25,43 +26,44 @@
 
 <div class="container">
     <h1 style="color: var(--primary); margin: 0 0 5px 0;">🚀 منصة زنقة الكلاب</h1>
-    <p style="margin-bottom: 15px;">بواسطة المبدع: <span style="color: var(--success); font-weight: bold;">محمود جمال</span></p>
+    <p>بواسطة المبدع: <span style="color: var(--success); font-weight: bold;">محمود جمال</span></p>
     
     <div id="setup">
         <div style="background:#2d3436; padding:10px; border-radius:10px; border:1px dashed var(--success); margin-bottom:15px; font-size: 12px;">
             🔑 كود التفعيل للدفعة:<br>
-            <code style="color:var(--success); word-break:break-all;">AIzaSyBoY4hFrj7PGQeTwxv0BM2YxMNhb5G8950</code>
+            <code id="raw-key" style="color:var(--success); word-break:break-all;">AIzaSyBoY4hFrj7PGQeTwxv0BM2YxMNhb5G8950</code>
         </div>
         <input type="text" id="apiKey" style="width:90%; padding:12px; border-radius:8px; border:1px solid var(--primary); background:#000; color:#fff; text-align:center;" placeholder="الصق الكود هنا...">
         <br><button class="btn" style="background:var(--primary)" onclick="activate()">تفعيل وتشغيل ⚡</button>
     </div>
 
     <div id="mainApp" class="hidden">
-        <div id="quote" style="font-style:italic; color:#ff9f43; margin-bottom:15px; font-size: 14px;">"الامتياز مش بعيد يا دحيح!"</div>
-        
         <label for="pdfFile" class="file-label" id="fileLabel">📁 اضغط هنا لاختيار المحاضرة (PDF)</label>
         <input type="file" id="pdfFile" accept=".pdf" style="display:none">
         
-        <button class="btn btn-summary" onclick="process('summary')">لخصلي المنهج</button>
-        <button class="btn btn-exam" onclick="process('exam')">امتحان تفاعلي 🎵</button>
-        <p style="font-size: 10px; color: #666; cursor: pointer;" onclick="localStorage.clear(); location.reload();">تغيير المفتاح</p>
+        <div id="status-msg"></div>
+
+        <button id="sumBtn" class="btn btn-summary" onclick="process('summary')">لخصلي المنهج</button>
+        <button id="examBtn" class="btn btn-exam" onclick="process('exam')">امتحان تفاعلي 🎵</button>
+        <p style="font-size: 10px; color: #666; cursor: pointer; margin-top: 15px;" onclick="localStorage.clear(); location.reload();">تغيير المفتاح 🔑</p>
     </div>
 
     <audio id="music" src="song.mp3" loop></audio>
 
     <div id="resBox" class="hidden" style="margin-top: 20px;">
-        <h3 id="resTitle" style="color: var(--success); border-bottom:1px solid #444; padding-bottom:10px;">جاري المعالجة...</h3>
-        <div id="score-board" class="hidden"></div>
-        <div id="resContent" style="text-align:right; line-height:1.8;"></div>
+        <h3 id="resTitle" style="color: var(--success); border-bottom:1px solid #444; padding-bottom:10px;">النتيجة:</h3>
+        <div id="score-board" class="hidden" style="font-size: 1.5rem; color: var(--success); margin: 15px 0; border: 2px solid var(--success); padding: 10px; border-radius: 10px;"></div>
+        <div id="resContent" style="text-align:right; line-height:1.8; white-space: pre-wrap;"></div>
     </div>
 </div>
 
 <script>
+    // تفعيل المكتبة وتحديد مسار الـ Worker
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
-    // التأكد من اختيار الملف وتغيير النص
     document.getElementById('pdfFile').onchange = function() {
-        if(this.files[0]) document.getElementById('fileLabel').innerText = "✅ تم اختيار: " + this.files[0].name;
+        if(this.files[0]) document.getElementById('fileLabel').innerText = "✅ جاهز: " + this.files[0].name;
     };
 
     function activate() {
@@ -73,71 +75,85 @@
 
     async function process(mode) {
         const fileInput = document.getElementById('pdfFile');
-        if(!fileInput.files[0]) { alert("يا حودة اختار الملف الأول من الزرار الأزرق!"); return; }
+        if(!fileInput.files[0]) { alert("يا حودة اختار الملف الأول!"); return; }
 
+        const status = document.getElementById('status-msg');
         const resBox = document.getElementById('resBox');
         const resContent = document.getElementById('resContent');
         const music = document.getElementById('music');
         
-        resBox.classList.remove('hidden');
-        document.getElementById('score-board').classList.add('hidden');
-        resContent.innerHTML = "<b>جاري قراءة الملف وتجهيز المنهج.. ثواني.. 🧠</b>";
+        status.innerText = "⏳ جاري قراءة الملف.. (ثواني)";
+        resBox.classList.add('hidden');
+        resContent.innerHTML = "";
         
-        if(mode === 'exam') music.play().catch(() => {}); else music.pause();
+        if(mode === 'exam') music.play().catch(() => {});
 
         try {
             const file = fileInput.files[0];
-            const reader = new FileReader();
+            const arrayBuffer = await file.arrayBuffer();
             
-            reader.onload = async function() {
-                const typedarray = new Uint8Array(this.result);
-                const pdf = await pdfjsLib.getDocument(typedarray).promise;
-                let text = "";
-                for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    text += content.items.map(it => it.str).join(" ") + " ";
-                }
+            // قراءة الـ PDF
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            let fullText = "";
+            
+            status.innerText = `⏳ جاري استخراج النص من ${pdf.numPages} صفحة...`;
+            
+            for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                fullText += content.items.map(it => it.str).join(" ") + " ";
+            }
 
-                const prompt = mode === 'summary' ? 
-                    `لخص النص التالي في نقاط شاملة جداً بالعربية:\n${text.substring(0, 10000)}` :
-                    `قم بعمل امتحان شامل (10 أسئلة) MCQ من النص. التنسيق:
-                    Q: السؤال؟
-                    A) اختيار 1
-                    B) اختيار 2
-                    C) اختيار 3
-                    D) اختيار 4
-                    Correct: الحرف الصحيح (A أو B أو C أو D)
-                    النص: ${text.substring(0, 10000)}`;
+            if (fullText.trim().length < 10) throw new Error("الملف فاضي أو عبارة عن صور بس (مش كلام)");
 
-                const key = localStorage.getItem('m_key');
-                // تجربة v1beta أولاً كخيار افتراضي
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
+            status.innerText = "⏳ ببعت النص لـ Gemini.. (انتظر الإبهار)";
 
-                const data = await response.json();
-                const output = data.candidates[0].content.parts[0].text;
+            const prompt = mode === 'summary' ? 
+                `لخص النص التالي في نقاط واضحة وشاملة جداً بالعربية:\n${fullText.substring(0, 10000)}` :
+                `قم بعمل 10 أسئلة MCQ من النص. التنسيق:
+                Q: السؤال؟
+                A) اختيار 1
+                B) اختيار 2
+                C) اختيار 3
+                D) اختيار 4
+                Correct: الحرف الصحيح (A أو B أو C أو D)
+                النص: ${fullText.substring(0, 10000)}`;
 
-                if (mode === 'summary') {
-                    document.getElementById('resTitle').innerText = "📝 ملخص محمود جمال الشامل:";
-                    resContent.innerHTML = output.replace(/\n/g, '<br>');
-                } else {
-                    renderExam(output);
-                }
-            };
-            reader.readAsArrayBuffer(file);
+            const key = localStorage.getItem('m_key');
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
 
-        } catch (e) { resContent.innerHTML = "حصل خطأ في الاتصال: " + e.message; }
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+
+            const output = data.candidates[0].content.parts[0].text;
+            resBox.classList.remove('hidden');
+            status.innerText = "✅ تمت المعالجة بنجاح!";
+
+            if (mode === 'summary') {
+                document.getElementById('resTitle').innerText = "📝 ملخص محمود جمال:";
+                resContent.innerHTML = output.replace(/\n/g, '<br>');
+            } else {
+                renderExam(output);
+            }
+
+        } catch (e) { 
+            status.innerText = "❌ حصلت مشكلة!";
+            resBox.classList.remove('hidden');
+            resContent.innerHTML = "<b>السبب:</b> " + e.message;
+            music.pause();
+        }
     }
 
     function renderExam(text) {
-        document.getElementById('resTitle').innerText = "✍️ امتحان التحدي (تفاعلي):";
+        document.getElementById('resTitle').innerText = "✍️ امتحان تفاعلي:";
         const resContent = document.getElementById('resContent');
         resContent.innerHTML = "";
         const scoreBoard = document.getElementById('score-board');
+        scoreBoard.classList.add('hidden');
         
         const qBlocks = text.split(/Q:/g).filter(b => b.trim().length > 10);
         let score = 0; let answered = 0;
@@ -170,7 +186,7 @@
                         });
                     }
                     if(answered === qBlocks.length) {
-                        scoreBoard.innerText = `عاش يا دحيح! نتيجتك: ${score} من ${qBlocks.length} 🥳`;
+                        scoreBoard.innerText = `درجتك: ${score} من ${qBlocks.length} 🥳`;
                         scoreBoard.classList.remove('hidden');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
