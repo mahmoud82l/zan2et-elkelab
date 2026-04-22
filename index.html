@@ -18,7 +18,7 @@
         .file-label { display: block; background: var(--primary); padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; border: 2px dashed #fff; }
         input[type="text"], input[type="number"], select { width: 90%; padding: 12px; border-radius: 8px; border: 1px solid var(--primary); background: #000; color: #fff; text-align: center; margin-bottom: 15px; font-family: inherit; }
         
-        /* لوحة تحكم الامتحان */
+        /* لوحة تحكم الامتحان والصفحات */
         .controls-box { background: #12151e; border: 1px solid #3d4451; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: right; font-size: 14px; }
         .controls-box label { display: inline-block; margin-right: 10px; color: #aaa; }
         .controls-box input[type="number"], .controls-box select { width: auto; display: inline-block; padding: 8px; margin: 0 5px 10px 0; }
@@ -73,20 +73,19 @@
         <script type="text/javascript" src="https://www.highperformanceformat.com/2c561b19eb0e3bfa10d7c2d1509ed9a1/invoke.js"></script>
     </div>
 
-    <div id="setupSection">
-        <div style="background:#2d3436; padding:15px; border-radius:12px; border:1px dashed var(--success); margin-bottom:15px;">
-            <p style="margin:0 0 10px 0; font-size:14px; color: #aaa;">🔑 كود التفعيل :</p>
-            <code id="keyToCopy" style="color:var(--success); word-break:break-all; font-weight:bold; font-size: 1.1rem; display:block; margin-bottom:10px;">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</code>
-            <button onclick="copyMyKey()" style="background:var(--success); border:none; padding:8px 15px; border-radius:6px; color:#000; font-weight:bold; cursor:pointer;">📋 نسخ الكود</button>
-        </div>
-        <input type="text" id="userInputKey" placeholder="الصق كود التفعيل هنا...">
-        <br><button class="btn" style="background:var(--primary)" onclick="activate()">تفعيل ودخول للمنصة ⚡</button>
-    </div>
-
-    <div id="mainApp" class="hidden">
+    <div id="mainApp">
         <label for="pdfInput" class="file-label" id="fileLabel">📁 اضغط هنا واختار المحاضرة (PDF)</label>
         <input type="file" id="pdfInput" accept=".pdf" style="display:none">
         
+        <div class="controls-box" style="border-color: #eccc68;">
+            <h4 style="margin: 0 0 10px 0; color: #eccc68;">📄 حدد الصفحات اللي هتذاكرها:</h4>
+            <label>من صفحة:</label>
+            <input type="number" id="pageStart" value="1" min="1" style="width: 60px;">
+            <label>إلى صفحة:</label>
+            <input type="number" id="pageEnd" value="15" min="1" style="width: 60px;">
+            <p style="font-size: 11px; color: #aaa; margin: 5px 0 0 0;">* يفضل متزودش عن 15-20 صفحة في المرة عشان التلخيص يطلع دقيق والموقع ميهنجش.</p>
+        </div>
+
         <div class="controls-box">
             <h4 style="margin: 0 0 10px 0; color: var(--success);">⚙️ إعدادات الامتحان:</h4>
             <label>عدد الأسئلة:</label>
@@ -103,8 +102,6 @@
         <button class="btn btn-summary" onclick="startProcess('summary')">لخصلي المنهج (شامل)</button>
         <button class="btn btn-exam" onclick="startProcess('exam')">امتحان تفاعلي 🎵</button>
         <button class="btn btn-chat" onclick="openChatMode()">💬 افتح شات المنهج (مفتوح)</button>
-        
-        <p style="font-size: 11px; color: #666; cursor: pointer; margin-top: 15px;" onclick="localStorage.clear(); location.reload();">تغيير المفتاح 🔑</p>
     </div>
 
     <audio id="examMusic" src="song.mp3" loop></audio>
@@ -164,34 +161,15 @@
     let globalPdfText = ""; 
     let chatHistory = []; 
 
-    function copyMyKey() {
-        navigator.clipboard.writeText(document.getElementById('keyToCopy').innerText);
-        alert("تم نسخ الكود بنجاح!");
-    }
-
-    // رقمك هنا يا حودة (حط رقمك الحقيقي بالصيغة الدولية بدون +)
     function sendToSupport() {
         const msg = document.getElementById('contactMsg').value.trim();
         if(!msg) return alert("اكتب رسالة الأول يا بطل!");
-        const phoneNumber = "201288894905"; // <--- غير الرقم ده لرقمك
+        const phoneNumber = "201288894905"; 
         window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent("رسالة من منصة zn8h alklab: \n" + msg)}`, '_blank');
     }
 
     document.getElementById('pdfInput').onchange = function() {
         if(this.files[0]) document.getElementById('fileLabel').innerText = "✅ تم التحميل: " + this.files[0].name;
-    };
-
-    function activate() {
-        const k = document.getElementById('userInputKey').value.trim();
-        if(k.startsWith('gsk_')) { localStorage.setItem('groq_key', k); location.reload(); }
-        else { alert("الكود غلط.. لازم يبدأ بـ gsk_"); }
-    }
-
-    window.onload = () => {
-        if(localStorage.getItem('groq_key')) {
-            document.getElementById('setupSection').classList.add('hidden');
-            document.getElementById('mainApp').classList.remove('hidden');
-        }
     };
 
     function formatText(text) {
@@ -215,7 +193,14 @@
                 const arrayBuffer = await fileInput.files[0].arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
                 globalPdfText = ""; 
-                for (let i = 1; i <= Math.min(pdf.numPages, 12); i++) {
+                // الشات بيقرا لحد 20 صفحة برضه
+                let pStart = parseInt(document.getElementById('pageStart').value) || 1;
+                let pEnd = parseInt(document.getElementById('pageEnd').value) || 20;
+                if(pStart < 1) pStart = 1;
+                if(pEnd > pdf.numPages) pEnd = pdf.numPages;
+                if((pEnd - pStart) > 20) pEnd = pStart + 20;
+
+                for (let i = pStart; i <= pEnd; i++) {
                     globalPdfText += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " ";
                 }
                 
@@ -224,7 +209,7 @@
                     content: `أنت دكتور جامعي خبير ومرشد أكاديمي ذكي. هذا هو نص المحاضرة: ${globalPdfText.substring(0, 15000)}. مهمتك مساعدة الطالب على فهم المنهج بعمق. أجب بأسلوب احترافي، دقيق، ومبسط. استخدم الأمثلة، ونسق إجاباتك بالعناوين العريضة، وقدم مصادر وروابط حقيقية إذا طلب منك.` 
                 }];
                 
-                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">أهلاً بيك! أنا دكتور المادة، قريت المحاضرة وجاهز. تقدر تسألني في أي جزء مش فاهمه، أو أطلب مني أسئلة بمستويات معينة! 🚀</div></div>`;
+                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">أهلاً بيك! أنا دكتور المادة، قريت الصفحات اللي حددتها وجاهز. تقدر تسألني في أي جزء مش فاهمه، أو أطلب مني أسئلة بمستويات معينة! 🚀</div></div>`;
             } catch(e) {
                 chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai" style="background:var(--danger)">عطل في القراءة: ${e.message}</div></div>`;
             }
@@ -253,10 +238,12 @@
         chatBox.scrollTop = chatBox.scrollHeight;
 
         try {
-            const key = localStorage.getItem('groq_key');
+            // المفتاح بتاعك متسجل هنا
+            const key = "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";
+            
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: chatHistory, model: "llama-3.3-70b-versatile", temperature: 0.7 })
+                body: JSON.stringify({ messages: chatHistory, model: "llama-3.1-8b-instant", temperature: 0.7 })
             });
             const data = await response.json();
             const aiReply = data.choices[0].message.content;
@@ -281,8 +268,8 @@
         const scoreBoard = document.getElementById('score-board');
         
         resBox.classList.remove('hidden');
-        scoreBoard.classList.add('hidden');
-        resContent.innerHTML = "<b>جاري التحليل... 🧠</b>";
+        if(scoreBoard) scoreBoard.classList.add('hidden');
+        resContent.innerHTML = "<b>جاري التحليل وتلخيص المنهج... 🧠 ⏳</b>";
         
         if(mode === 'exam') music.play().catch(() => {}); else { music.pause(); music.currentTime = 0; }
 
@@ -290,39 +277,65 @@
             const arrayBuffer = await fileInput.files[0].arrayBuffer();
             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
             let text = "";
-            for (let i = 1; i <= Math.min(pdf.numPages, 12); i++) { text += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " "; }
+            
+            // قراءة الصفحات اللي الطالب حددها
+            let pStart = parseInt(document.getElementById('pageStart').value) || 1;
+            let pEnd = parseInt(document.getElementById('pageEnd').value) || 15;
+            
+            // حماية من الأرقام الغلط وتحديد أقصى عدد
+            if(pStart < 1) pStart = 1;
+            if(pEnd > pdf.numPages) pEnd = pdf.numPages;
+            if((pEnd - pStart) > 20) {
+                pEnd = pStart + 20;
+                alert("عشان السيرفر ميقعش، هنلخص 20 صفحة بس من اللي اخترتهم. تقدر تلخص الباقي بعدين!");
+            }
 
-            // جلب الإعدادات من لوحة التحكم
-            const qCount = document.getElementById('qCount').value;
-            const qDiff = document.getElementById('qDiff').value;
+            for (let i = pStart; i <= pEnd; i++) { 
+                text += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " "; 
+            }
+
+            const qCount = document.getElementById('qCount').value || 10;
+            const qDiff = document.getElementById('qDiff').value || "متوسط";
 
             const prompt = mode === 'summary' ? 
-                `أنت أستاذ جامعي خبير. قم بعمل ملخص أكاديمي دقيق وشامل للنص التالي. قسم الملخص إلى عناوين رئيسية واضحة، وضع تحت كل عنوان أهم النقاط بأسلوب علمي مبسط يسهل فهمه وحفظه:\n${text.substring(0, 15000)}` :
-                `قم بعمل امتحان MCQ مكون من (${qCount} أسئلة) بمستوى صعوبة (${qDiff}) من النص. التنسيق المطلوب بدقة:
+                `أنت أستاذ جامعي. قم بعمل ملخص أكاديمي دقيق وشامل للنص التالي في نقاط وعناوين: ${text.substring(0, 5000)}` :
+                `قم بعمل امتحان MCQ مكون من (${qCount} أسئلة) بمستوى صعوبة (${qDiff}) من النص. التنسيق:
                 Q: السؤال؟
                 A) اختيار 1
                 B) اختيار 2
                 C) اختيار 3
                 D) اختيار 4
-                Correct: الحرف الصحيح (A أو B أو C أو D)
-                النص: ${text.substring(0, 15000)}`;
+                Correct: الحرف الصحيح
+                النص: ${text.substring(0, 5000)}`;
 
-            const key = localStorage.getItem('groq_key');
+            // المفتاح بتاعك متسجل هنا برضه
+            const key = "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";
+
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                 method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: [{ role: "user", content: prompt }], model: "llama-3.3-70b-versatile" })
+                body: JSON.stringify({ messages: [{ role: "user", content: prompt }], model: "llama-3.1-8b-instant" })
             });
 
             const data = await response.json();
-            const output = data.choices[0].message.content;
-
-            if (mode === 'summary') {
-                document.getElementById('resTitle').innerText = "📝 الملخص الشامل:";
-                resContent.innerHTML = formatText(output);
-            } else {
-                renderInteractiveExam(output);
+            
+            if (data.error) {
+                resContent.innerHTML = `<span style="color:var(--danger)">❌ عذراً يا بطل: ${data.error.message} (غالباً ضغط على السيرفر، جرب كمان دقيقة)</span>`;
+                return;
             }
-        } catch (e) { resContent.innerHTML = "❌ خطأ: " + e.message; }
+
+            if (data.choices && data.choices.length > 0) {
+                const output = data.choices[0].message.content;
+                if (mode === 'summary') {
+                    document.getElementById('resTitle').innerText = "📝 الملخص الشامل:";
+                    resContent.innerHTML = formatText(output);
+                } else {
+                    renderInteractiveExam(output);
+                }
+            } else {
+                resContent.innerHTML = "❌ السيرفر مرجعش أي كلام.. جرب ترفع ملف أصغر شوية.";
+            }
+
+        } catch (e) { resContent.innerHTML = "❌ خطأ فني: " + e.message; }
     }
 
     function renderInteractiveExam(text) {
