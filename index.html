@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zn8h alklab</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/tesseract.js@v4.0.1/dist/tesseract.min.js"></script>
+    
     <style>
         :root { --primary: #3742fa; --success: #2ed573; --danger: #ff4757; --bg: #0a0a12; --card: #1e1e2f; --chat-ai: #2d3436; --chat-user: #3742fa; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); color: #fff; margin: 0; padding: 15px; text-align: center; overflow-x: hidden; }
@@ -18,12 +20,10 @@
         .file-label { display: block; background: var(--primary); padding: 15px; border-radius: 12px; cursor: pointer; margin-bottom: 20px; border: 2px dashed #fff; }
         input[type="text"], input[type="number"], select { width: 90%; padding: 12px; border-radius: 8px; border: 1px solid var(--primary); background: #000; color: #fff; text-align: center; margin-bottom: 15px; font-family: inherit; }
         
-        /* لوحة تحكم الامتحان والصفحات */
         .controls-box { background: #12151e; border: 1px solid #3d4451; padding: 15px; border-radius: 12px; margin-bottom: 15px; text-align: right; font-size: 14px; }
         .controls-box label { display: inline-block; margin-right: 10px; color: #aaa; }
         .controls-box input[type="number"], .controls-box select { width: auto; display: inline-block; padding: 8px; margin: 0 5px 10px 0; }
 
-        /* واجهة الشات المنفصلة */
         #chatPage { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; text-align: right; }
         .chat-header { background: var(--card); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary); }
         .chat-header h2 { margin: 0; font-size: 1.2rem; color: var(--success); }
@@ -40,17 +40,13 @@
         .chat-input-area input { flex: 1; margin: 0; width: auto; text-align: right; border-radius: 12px; }
         .chat-input-area button { width: auto; margin: 0; padding: 15px 25px; background: var(--success); border-radius: 12px; }
         
-        /* ستايل الامتحان */
         .q-box { background: #1e1e2f; border: 1px solid #3d4451; padding: 15px; border-radius: 15px; margin-bottom: 20px; text-align: right; }
         .opt-btn { display: block; width: 100%; text-align: right; padding: 12px; margin: 8px 0; background: #3d4451; border: 1px solid #555; border-radius: 8px; color: #fff; cursor: pointer; font-size: 15px; }
         .correct { background: var(--success) !important; font-weight: bold; }
         .wrong { background: var(--danger) !important; }
         #score-board { font-size: 1.8rem; font-weight: bold; color: var(--success); margin: 20px 0; padding: 15px; border: 2px solid var(--success); border-radius: 12px; background: rgba(46, 213, 115, 0.1); }
         
-        /* صندوق الدعم */
         .support-box { margin-top: 40px; padding: 15px; background: #1a1a1a; border-radius: 12px; border: 1px dashed #555; text-align: center; }
-
-        /* ستايل الإعلانات الجديد */
         .ad-container { margin: 15px auto; padding: 5px; background: #12151e; border: 1px dashed #3d4451; border-radius: 10px; min-height: 50px; display: flex; justify-content: center; align-items: center; overflow: hidden; width: fit-content; }
     </style>
 </head>
@@ -82,8 +78,8 @@
             <label>من صفحة:</label>
             <input type="number" id="pageStart" value="1" min="1" style="width: 60px;">
             <label>إلى صفحة:</label>
-            <input type="number" id="pageEnd" value="15" min="1" style="width: 60px;">
-            <p style="font-size: 11px; color: #aaa; margin: 5px 0 0 0;">* يفضل متزودش عن 15-20 صفحة في المرة عشان التلخيص يطلع دقيق والموقع ميهنجش.</p>
+            <input type="number" id="pageEnd" value="3" min="1" style="width: 60px;">
+            <p style="font-size: 11px; color: #aaa; margin: 5px 0 0 0;">* لو الملف متصور (صور)، يفضل تختار 3 لـ 5 صفحات بالكتير عشان وقت المعالجة.</p>
         </div>
 
         <div class="controls-box">
@@ -117,19 +113,6 @@
         <p style="font-size: 12px; color: #aaa;">لو قابلك أي عطل أو عندك اقتراح، ابعتلي هنا:</p>
         <input type="text" id="contactMsg" placeholder="اكتب رسالتك..." style="width: 100%; box-sizing: border-box;">
         <button onclick="sendToSupport()" class="btn" style="background: #25D366; width: auto; padding: 10px 20px; font-size: 14px;">إرسال عبر واتساب 💬</button>
-    </div>
-
-    <div class="ad-container" style="margin-top: 20px;">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : '2c561b19eb0e3bfa10d7c2d1509ed9a1',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="https://www.highperformanceformat.com/2c561b19eb0e3bfa10d7c2d1509ed9a1/invoke.js"></script>
     </div>
 </div>
 
@@ -179,6 +162,33 @@
         return text;
     }
 
+    // --- دالة جديدة لاستخراج النص أو قراءة الصور بالـ OCR ---
+    async function extractTextFromPage(page) {
+        const textContent = await page.getTextContent();
+        let pageText = textContent.items.map(it => it.str).join(" ");
+        
+        // لو مفيش نص تقريباً، يبقى الملف عبارة عن صور (CamScanner مثلاً)
+        if (pageText.trim().length < 20) {
+            console.log("الصفحة دي صورة! جاري تشغيل الـ OCR...");
+            const viewport = page.getViewport({ scale: 1.5 }); // الجودة معقولة عشان ميهنجش
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            
+            await page.render({ canvasContext: context, viewport: viewport }).promise;
+            
+            try {
+                const { data: { text } } = await Tesseract.recognize(canvas, 'ara'); // قراءة العربي
+                pageText = text;
+            } catch (err) {
+                console.error("خطأ في قراءة الصورة:", err);
+            }
+        }
+        return pageText;
+    }
+    // -----------------------------------------------------
+
     async function openChatMode() {
         const fileInput = document.getElementById('pdfInput');
         if(!fileInput.files[0]) return alert("ارفع المحاضرة الأول!");
@@ -188,12 +198,12 @@
         const chatBox = document.getElementById('chatBox');
         
         if (chatHistory.length === 0) {
-            chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">بقرأ المحاضرة.. ثواني ⏳</div></div>`;
+            chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">بقرأ المحاضرة.. ثواني ⏳<br><small style="color:#aaa;">(لو الملف متصور بالموبايل، ممكن ياخد وقت أطول شوية)</small></div></div>`;
             try {
                 const arrayBuffer = await fileInput.files[0].arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
                 globalPdfText = ""; 
-                // الشات بيقرا لحد 20 صفحة برضه
+                
                 let pStart = parseInt(document.getElementById('pageStart').value) || 1;
                 let pEnd = parseInt(document.getElementById('pageEnd').value) || 20;
                 if(pStart < 1) pStart = 1;
@@ -201,7 +211,9 @@
                 if((pEnd - pStart) > 20) pEnd = pStart + 20;
 
                 for (let i = pStart; i <= pEnd; i++) {
-                    globalPdfText += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " ";
+                    const page = await pdf.getPage(i);
+                    // استخدام الدالة الجديدة بدل القديمة
+                    globalPdfText += (await extractTextFromPage(page)) + " ";
                 }
                 
                 chatHistory = [{ 
@@ -238,7 +250,6 @@
         chatBox.scrollTop = chatBox.scrollHeight;
 
         try {
-            // المفتاح بتاعك متسجل هنا
             const key = "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";
             
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -269,7 +280,7 @@
         
         resBox.classList.remove('hidden');
         if(scoreBoard) scoreBoard.classList.add('hidden');
-        resContent.innerHTML = "<b>جاري التحليل وتلخيص المنهج... 🧠 ⏳</b>";
+        resContent.innerHTML = "<b>جاري التحليل وتلخيص المنهج... 🧠 ⏳<br><small>(لو الملف متصور هياخد شوية وقت عشان بيعمل مسح للصور)</small></b>";
         
         if(mode === 'exam') music.play().catch(() => {}); else { music.pause(); music.currentTime = 0; }
 
@@ -278,20 +289,20 @@
             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
             let text = "";
             
-            // قراءة الصفحات اللي الطالب حددها
             let pStart = parseInt(document.getElementById('pageStart').value) || 1;
             let pEnd = parseInt(document.getElementById('pageEnd').value) || 15;
             
-            // حماية من الأرقام الغلط وتحديد أقصى عدد
             if(pStart < 1) pStart = 1;
             if(pEnd > pdf.numPages) pEnd = pdf.numPages;
             if((pEnd - pStart) > 20) {
                 pEnd = pStart + 20;
-                alert("عشان السيرفر ميقعش، هنلخص 20 صفحة بس من اللي اخترتهم. تقدر تلخص الباقي بعدين!");
+                alert("عشان السيرفر ميهنجش، هنلخص 20 صفحة بس. لو الملف صور، ممكن ياخد دقيقة أو دقيقتين!");
             }
 
             for (let i = pStart; i <= pEnd; i++) { 
-                text += (await (await pdf.getPage(i)).getTextContent()).items.map(it => it.str).join(" ") + " "; 
+                const page = await pdf.getPage(i);
+                // استخدام الدالة الجديدة هنا كمان
+                text += (await extractTextFromPage(page)) + " "; 
             }
 
             const qCount = document.getElementById('qCount').value || 10;
@@ -308,7 +319,6 @@
                 Correct: الحرف الصحيح
                 النص: ${text.substring(0, 5000)}`;
 
-            // المفتاح بتاعك متسجل هنا برضه
             const key = "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";
 
             const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
