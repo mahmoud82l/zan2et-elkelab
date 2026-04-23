@@ -157,15 +157,13 @@
         return text;
     }
 
-    // --- دالة جديدة لاستخراج النص أو قراءة الصور بالـ OCR ---
     async function extractTextFromPage(page) {
         const textContent = await page.getTextContent();
         let pageText = textContent.items.map(it => it.str).join(" ");
         
-        // لو مفيش نص تقريباً، يبقى الملف عبارة عن صور (CamScanner مثلاً)
         if (pageText.trim().length < 20) {
             console.log("الصفحة دي صورة! جاري تشغيل الـ OCR...");
-            const viewport = page.getViewport({ scale: 1.5 }); // الجودة معقولة عشان ميهنجش
+            const viewport = page.getViewport({ scale: 1.5 });
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             canvas.height = viewport.height;
@@ -174,7 +172,7 @@
             await page.render({ canvasContext: context, viewport: viewport }).promise;
             
             try {
-                const { data: { text } } = await Tesseract.recognize(canvas, 'ara'); // قراءة العربي
+                const { data: { text } } = await Tesseract.recognize(canvas, 'ara');
                 pageText = text;
             } catch (err) {
                 console.error("خطأ في قراءة الصورة:", err);
@@ -182,7 +180,6 @@
         }
         return pageText;
     }
-    // -----------------------------------------------------
 
     async function openChatMode() {
         const fileInput = document.getElementById('pdfInput');
@@ -207,7 +204,6 @@
 
                 for (let i = pStart; i <= pEnd; i++) {
                     const page = await pdf.getPage(i);
-                    // استخدام الدالة الجديدة بدل القديمة
                     globalPdfText += (await extractTextFromPage(page)) + " ";
                 }
                 
@@ -296,7 +292,6 @@
 
             for (let i = pStart; i <= pEnd; i++) { 
                 const page = await pdf.getPage(i);
-                // استخدام الدالة الجديدة هنا كمان
                 text += (await extractTextFromPage(page)) + " "; 
             }
 
@@ -305,13 +300,15 @@
 
             const prompt = mode === 'summary' ? 
                 `أنت أستاذ جامعي. قم بعمل ملخص أكاديمي دقيق وشامل للنص التالي في نقاط وعناوين: ${text.substring(0, 5000)}` :
-                `قم بعمل امتحان MCQ مكون من (${qCount} أسئلة) بمستوى صعوبة (${qDiff}) من النص. التنسيق:
+                `قم بعمل امتحان MCQ مكون من (${qCount} أسئلة) بمستوى صعوبة (${qDiff}) من النص.
+                تحذير هام جداً: إياك كتابة أي مقدمات أو أرقام للأسئلة. استخدم حرف Q فقط لتمييز السؤال. يجب أن يكون التنسيق هكذا تماماً:
                 Q: السؤال؟
                 A) اختيار 1
                 B) اختيار 2
                 C) اختيار 3
                 D) اختيار 4
-                Correct: الحرف الصحيح
+                Correct: A
+                
                 النص: ${text.substring(0, 5000)}`;
 
             const key = "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";
@@ -348,27 +345,52 @@
         const resContent = document.getElementById('resContent'); resContent.innerHTML = "";
         const scoreBoard = document.getElementById('score-board');
         
-        const qBlocks = text.split(/Q:/g).filter(b => b.trim().length > 15);
+        let cleanText = text.replace(/\*\*/g, ''); 
+        cleanText = cleanText.replace(/(?:^|\n)(?:Q|س|السؤال)?\s*\d+[\.\-\)]\s*/gi, '\nQ: '); 
+        
+        const qBlocks = cleanText.split(/Q:/g).filter(b => b.trim().length > 15);
         let score = 0; let answered = 0;
+
+        if(qBlocks.length === 0) {
+            resContent.innerHTML = "<p style='color:var(--warning);'>⚠️ حصلت لخبطة في الذكاء الاصطناعي.. جرب تدوس على زرار الامتحان تاني!</p>";
+            return;
+        }
 
         qBlocks.forEach((block, idx) => {
             const lines = block.split('\n').map(l => l.trim()).filter(l => l);
             const questionText = lines[0];
-            const options = lines.filter(l => l.match(/^[A-D]\)/));
-            const correctLine = lines.find(l => l.startsWith('Correct:'));
-            const correctLetter = correctLine ? correctLine.replace('Correct:', '').trim() : "";
+            const options = lines.filter(l => l.match(/^[A-Dأ-د][\)\.\-]/i));
+            const correctLine = lines.find(l => l.toLowerCase().includes('correct'));
+            const correctLetter = correctLine ? correctLine.replace(/correct/i, '').replace(/[:\-\s]/g, '').charAt(0).toUpperCase() : "";
+
+            if(options.length < 2) return; 
 
             const qDiv = document.createElement('div'); qDiv.className = 'q-box';
             qDiv.innerHTML = `<b>${idx+1}. ${questionText}</b>`;
 
             options.forEach(opt => {
-                const letter = opt[0]; const btn = document.createElement('button');
+                const letter = opt.charAt(0).toUpperCase(); 
+                const btn = document.createElement('button');
                 btn.className = 'opt-btn'; btn.innerText = opt;
                 btn.onclick = () => {
                     if(qDiv.dataset.done) return; qDiv.dataset.done = "true"; answered++;
-                    if(letter === correctLetter) { btn.classList.add('correct'); score++; }
-                    else { btn.classList.add('wrong'); Array.from(qDiv.querySelectorAll('.opt-btn')).forEach(b => { if(b.innerText.startsWith(correctLetter)) b.classList.add('correct'); }); }
-                    if(answered === qBlocks.length) { scoreBoard.innerText = `درجتك: ${score} من ${qBlocks.length} 🥳`; scoreBoard.classList.remove('hidden'); window.scrollTo({ top: scoreBoard.offsetTop - 20, behavior: 'smooth' }); }
+                    
+                    if(letter === correctLetter || (letter === 'أ' && correctLetter === 'A') || (letter === 'ب' && correctLetter === 'B') || (letter === 'ج' && correctLetter === 'C') || (letter === 'د' && correctLetter === 'D')) { 
+                        btn.classList.add('correct'); score++; 
+                    } else { 
+                        btn.classList.add('wrong'); 
+                        Array.from(qDiv.querySelectorAll('.opt-btn')).forEach(b => { 
+                            let bLetter = b.innerText.charAt(0).toUpperCase();
+                            if(bLetter === correctLetter || (bLetter === 'أ' && correctLetter === 'A') || (bLetter === 'ب' && correctLetter === 'B') || (bLetter === 'ج' && correctLetter === 'C') || (bLetter === 'د' && correctLetter === 'D')) {
+                                b.classList.add('correct'); 
+                            }
+                        }); 
+                    }
+                    if(answered === qBlocks.length) { 
+                        scoreBoard.innerText = `درجتك: ${score} من ${qBlocks.length} 🥳`; 
+                        scoreBoard.classList.remove('hidden'); 
+                        window.scrollTo({ top: scoreBoard.offsetTop - 20, behavior: 'smooth' }); 
+                    }
                 };
                 qDiv.appendChild(btn);
             });
