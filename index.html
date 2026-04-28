@@ -69,7 +69,7 @@
 
 <div class="container" id="homePage">
     <h1 style="color: var(--primary); margin: 0 0 10px 0;">🚀 zn8h alklab</h1>
-    <p style="margin-bottom: 20px; font-size: 14px; color: #bbb;">Designed by: <span style="color: var(--success); font-weight: bold;">Mahmoud gamal</span></p>
+    <p style="margin-bottom: 20px; font-size: 14px; color: #bbb;">Designed by: <span style="color: var(--success); font-weight: bold;">Mahmoud Gamal</span></p>
 
     <div class="ad-container">
         <iframe 
@@ -177,7 +177,7 @@
 
     let globalPdfText = ""; 
     let chatHistory = []; 
-    let activeKey = ""; // المتغير اللي هيشيل الكي بعد التفعيل
+    let activeKey = ""; 
 
     // تجميع الكي في المخفي عشان البوتات متسرقوش من الكود
     window.onload = function() {
@@ -303,7 +303,7 @@
                     'Content-Type': 'application/json' 
                 },
                 body: JSON.stringify({ 
-                    model: "meta-llama/llama-3.1-8b-instruct:free",
+                    model: "google/gemini-2.0-flash-exp:free",
                     messages: chatHistory, 
                     temperature: 0.7 
                 })
@@ -380,7 +380,7 @@
                     'Content-Type': 'application/json' 
                 },
                 body: JSON.stringify({ 
-                    model: "meta-llama/llama-3.1-8b-instruct:free",
+                    model: "google/gemini-2.0-flash-exp:free",
                     messages: [{ role: "user", content: prompt }] 
                 })
             });
