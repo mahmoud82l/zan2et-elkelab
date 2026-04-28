@@ -241,14 +241,22 @@
         chatBox.scrollTop = chatBox.scrollHeight;
 
         try {
-            // تمويه الكي الجديد لعدم السرقة
-            const part1 = "Gs" + "k_";
-            const part2 = "p1KIxJLUsf2xyfeVXFZkWGdyb3FYkt87WpXnS0ZtlKyS4FJ8Skcs";
+            // الكي بتاع OpenRouter متقسم للتمويه 
+            const part1 = "sk-or-v" + "1-";
+            const part2 = "51417e8c845c3322672bec694b1b96fe9ed4f8adc5e403b76b1ec06e11d347c8";
             const key = part1 + part2;
             
-            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: chatHistory, model: "llama-3.1-8b-instant", temperature: 0.7 })
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: 'POST', 
+                headers: { 
+                    'Authorization': `Bearer ${key}`, 
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ 
+                    model: "meta-llama/llama-3.1-8b-instruct:free",
+                    messages: chatHistory, 
+                    temperature: 0.7 
+                })
             });
             const data = await response.json();
             const aiReply = data.choices[0].message.content;
@@ -314,14 +322,21 @@
                 
                 النص: ${text.substring(0, 5000)}`;
 
-            // تمويه الكي الجديد لعدم السرقة
-            const part1 = "Gs" + "k_";
-            const part2 = "p1KIxJLUsf2xyfeVXFZkWGdyb3FYkt87WpXnS0ZtlKyS4FJ8Skcs";
+            // الكي بتاع OpenRouter متقسم للتمويه
+            const part1 = "sk-or-v" + "1-";
+            const part2 = "51417e8c845c3322672bec694b1b96fe9ed4f8adc5e403b76b1ec06e11d347c8";
             const key = part1 + part2;
 
-            const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                method: 'POST', headers: { 'Authorization': `Bearer ${key}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: [{ role: "user", content: prompt }], model: "llama-3.1-8b-instant" })
+            const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                method: 'POST', 
+                headers: { 
+                    'Authorization': `Bearer ${key}`, 
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ 
+                    model: "meta-llama/llama-3.1-8b-instruct:free",
+                    messages: [{ role: "user", content: prompt }] 
+                })
             });
 
             const data = await response.json();
@@ -351,49 +366,76 @@
         const resContent = document.getElementById('resContent'); resContent.innerHTML = "";
         const scoreBoard = document.getElementById('score-board');
         
-        let cleanText = text.replace(/\*\*/g, ''); 
-        cleanText = cleanText.replace(/(?:^|\n)(?:Q|س|السؤال)?\s*\d+[\.\-\)]\s*/gi, '\nQ: '); 
+        let lines = text.split('\n').map(l => l.trim().replace(/\*\*/g, '')).filter(l => l.length > 2);
         
-        const qBlocks = cleanText.split(/Q:/g).filter(b => b.trim().length > 15);
-        let score = 0; let answered = 0;
+        let questions = [];
+        let currentQ = null;
 
-        if(qBlocks.length === 0) {
-            resContent.innerHTML = "<p style='color:var(--warning);'>⚠️ حصلت لخبطة في الذكاء الاصطناعي.. جرب تدوس على زرار الامتحان تاني!</p>";
+        lines.forEach(line => {
+            let isOption = /^[A-Dأ-د][\)\.\-]/i.test(line);
+            let isCorrect = /correct|الإجابة|الصحيح/i.test(line);
+
+            if (isOption) {
+                if (currentQ) currentQ.options.push(line);
+            } else if (isCorrect) {
+                if (currentQ) {
+                    let match = line.match(/[A-Dأ-د]/i);
+                    if (match) currentQ.correctLetter = match[0].toUpperCase();
+                }
+            } else {
+                if (currentQ && currentQ.options.length >= 2) {
+                    questions.push(currentQ);
+                }
+                let cleanQText = line.replace(/^(?:Q|س|السؤال)?\s*\d+[\.\-\)\:\/]\s*/i, '');
+                currentQ = { text: cleanQText, options: [], correctLetter: "" };
+            }
+        });
+        
+        if (currentQ && currentQ.options.length >= 2) {
+            questions.push(currentQ);
+        }
+
+        if (questions.length === 0) {
+            resContent.innerHTML = "<p style='color:var(--warning);'>⚠️ الذكاء الاصطناعي مهيس ومش راضي يكتب اختيارات.. دوس على زرار الامتحان تاني!</p>";
             return;
         }
 
-        qBlocks.forEach((block, idx) => {
-            const lines = block.split('\n').map(l => l.trim()).filter(l => l);
-            const questionText = lines[0];
-            const options = lines.filter(l => l.match(/^[A-Dأ-د][\)\.\-]/i));
-            const correctLine = lines.find(l => l.toLowerCase().includes('correct'));
-            const correctLetter = correctLine ? correctLine.replace(/correct/i, '').replace(/[:\-\s]/g, '').charAt(0).toUpperCase() : "";
+        let score = 0; let answered = 0;
 
-            if(options.length < 2) return; 
+        questions.forEach((q, idx) => {
+            const qDiv = document.createElement('div'); 
+            qDiv.className = 'q-box';
+            qDiv.innerHTML = `<b>${idx+1}. ${q.text}</b>`;
 
-            const qDiv = document.createElement('div'); qDiv.className = 'q-box';
-            qDiv.innerHTML = `<b>${idx+1}. ${questionText}</b>`;
-
-            options.forEach(opt => {
+            q.options.forEach(opt => {
                 const letter = opt.charAt(0).toUpperCase(); 
                 const btn = document.createElement('button');
                 btn.className = 'opt-btn'; btn.innerText = opt;
                 btn.onclick = () => {
-                    if(qDiv.dataset.done) return; qDiv.dataset.done = "true"; answered++;
+                    if(qDiv.dataset.done) return; 
+                    qDiv.dataset.done = "true"; 
+                    answered++;
                     
-                    if(letter === correctLetter || (letter === 'أ' && correctLetter === 'A') || (letter === 'ب' && correctLetter === 'B') || (letter === 'ج' && correctLetter === 'C') || (letter === 'د' && correctLetter === 'D')) { 
+                    let cLetter = q.correctLetter;
+                    let isMatch = (letter === cLetter) || 
+                                  (letter === 'أ' && cLetter === 'A') || 
+                                  (letter === 'ب' && cLetter === 'B') || 
+                                  (letter === 'ج' && cLetter === 'C') || 
+                                  (letter === 'د' && cLetter === 'D');
+
+                    if(isMatch) { 
                         btn.classList.add('correct'); score++; 
                     } else { 
                         btn.classList.add('wrong'); 
                         Array.from(qDiv.querySelectorAll('.opt-btn')).forEach(b => { 
                             let bLetter = b.innerText.charAt(0).toUpperCase();
-                            if(bLetter === correctLetter || (bLetter === 'أ' && correctLetter === 'A') || (bLetter === 'ب' && correctLetter === 'B') || (bLetter === 'ج' && correctLetter === 'C') || (bLetter === 'د' && correctLetter === 'D')) {
+                            if((bLetter === cLetter) || (bLetter === 'أ' && cLetter === 'A') || (bLetter === 'ب' && cLetter === 'B') || (bLetter === 'ج' && cLetter === 'C') || (bLetter === 'د' && cLetter === 'D')) {
                                 b.classList.add('correct'); 
                             }
                         }); 
                     }
-                    if(answered === qBlocks.length) { 
-                        scoreBoard.innerText = `درجتك: ${score} من ${qBlocks.length} 🥳`; 
+                    if(answered === questions.length) { 
+                        scoreBoard.innerText = `درجتك: ${score} من ${questions.length} 🥳`; 
                         scoreBoard.classList.remove('hidden'); 
                         window.scrollTo({ top: scoreBoard.offsetTop - 20, behavior: 'smooth' }); 
                     }
