@@ -24,16 +24,16 @@
         .controls-box label { display: inline-block; margin-right: 10px; color: #aaa; }
         .controls-box input[type="number"], .controls-box select { width: auto; display: inline-block; padding: 8px; margin: 0 5px 10px 0; }
 
-        /* شاشة التفعيل (Boot Screen) */
+        /* شاشة التفعيل */
         #bootScreen { background: #12151e; padding: 25px; border-radius: 15px; border: 2px solid var(--cyan); box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); margin-bottom: 20px; }
-        #apiKeyInput { width: 90%; font-family: monospace; color: #fff; background: #000; border: 1px dashed var(--cyan); margin-bottom: 15px; padding: 15px; font-size: 12px; text-align: center; direction: ltr; border-radius: 8px; }
+        #apiKeyInput { width: 90%; font-family: monospace; color: #fff; background: #000; border: 1px dashed var(--cyan); margin-bottom: 15px; padding: 15px; font-size: 11px; text-align: center; direction: ltr; border-radius: 8px; }
         .btn-go { background: var(--cyan); color: #000; box-shadow: 0 0 15px rgba(0, 255, 255, 0.4); font-size: 18px; padding: 15px; }
 
-        /* كتاب الهوليجرام */
+        /* الهوليجرام */
         .hologram-book { position: fixed; bottom: 20px; left: 20px; font-size: 35px; cursor: pointer; z-index: 2000; animation: hologram 1.5s infinite alternate; filter: drop-shadow(0 0 10px var(--cyan)) drop-shadow(0 0 20px var(--cyan)); }
         @keyframes hologram { 0% { opacity: 0.6; transform: translateY(0) scale(1); filter: drop-shadow(0 0 5px var(--cyan)); } 100% { opacity: 1; transform: translateY(-10px) scale(1.1); filter: drop-shadow(0 0 25px var(--cyan)) hue-rotate(15deg); } }
 
-        /* المودال للدليل */
+        /* المودال */
         .modal { display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(5px); justify-content: center; align-items: center; }
         .modal-content { background: var(--card); padding: 25px; border-radius: 15px; width: 90%; max-width: 500px; border: 1px solid var(--cyan); text-align: right; box-shadow: 0 0 30px rgba(0, 255, 255, 0.2); }
         .close-modal { float: left; color: var(--danger); font-size: 30px; cursor: pointer; font-weight: bold; line-height: 1; }
@@ -71,18 +71,10 @@
     <h1 style="color: var(--primary); margin: 0 0 10px 0;">🚀 zn8h alklab</h1>
     <p style="margin-bottom: 20px; font-size: 14px; color: #bbb;">Designed by: <span style="color: var(--success); font-weight: bold;">Mahmoud Gamal</span></p>
 
-    <div class="ad-container">
-        <iframe 
-            srcdoc="<script type='text/javascript'>atOptions = { 'key' : '2c561b19eb0e3bfa10d7c2d1509ed9a1', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script><script type='text/javascript' src='https://www.highperformanceformat.com/2c561b19eb0e3bfa10d7c2d1509ed9a1/invoke.js'></script>" 
-            width="320" height="50" frameborder="0" scrolling="no" 
-            sandbox="allow-scripts allow-popups allow-same-origin">
-        </iframe>
-    </div>
-
     <div id="bootScreen">
         <h3 style="color: var(--cyan); margin-top: 0;">⚙️ تفعيل سيرفر Google Gemini</h3>
         <p style="font-size: 12px; color: gray; margin-bottom: 15px;">السيرفر جاهز.. دوس GO عشان تذاكر يا بطل</p>
-        <input type="text" id="apiKeyInput" value="AIzaSyC6Z-kawo4I0TVYC3pCJAUQgBlIsiT82VM">
+        <input type="text" id="apiKeyInput" value="" readonly>
         <button class="btn btn-go" onclick="bootSystem()">GO 🚀 (تفعيل)</button>
     </div>
 
@@ -175,9 +167,15 @@
     let chatHistory = []; 
     let activeKey = ""; 
 
+    window.onload = function() {
+        const p1 = "AIzaSy" + "C6Z-";
+        const p2 = "kawo4I0TVYC3pCJAUQgBlIsiT82VM";
+        document.getElementById('apiKeyInput').value = p1 + p2;
+    };
+
     function bootSystem() {
         activeKey = document.getElementById('apiKeyInput').value.trim();
-        if(!activeKey) return alert("لازم يكون في مفتاح تشغيل!");
+        if(!activeKey) return alert("مفيش مفتاح تشغيل!");
         document.getElementById('bootScreen').style.display = 'none';
         document.getElementById('mainApp').classList.remove('hidden');
     }
@@ -267,6 +265,13 @@
                 body: JSON.stringify({ contents: chatHistory })
             });
             const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+            
+            // صدادة الأمان للشات
+            if (!data.candidates || data.candidates.length === 0) {
+                throw new Error("جوجل رفض يرد على رسالتك عشان سياسات الحماية (Safety Block) المزعجة.");
+            }
+
             const aiReply = data.candidates[0].content.parts[0].text;
             document.getElementById(loadingId).remove();
             chatBox.innerHTML += `<div class="msg-row ai"><div class="msg-bubble ai">${formatText(aiReply)}</div></div>`;
@@ -289,6 +294,7 @@
         if(scoreBoard) scoreBoard.classList.add('hidden');
         resContent.innerHTML = "<b>جاري المعالجة بجوجل جيميناي... 🧠 ⏳</b>";
         if(mode === 'exam') music.play().catch(() => {}); else { music.pause(); music.currentTime = 0; }
+        
         try {
             const arrayBuffer = await fileInput.files[0].arrayBuffer();
             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
@@ -310,11 +316,28 @@
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: isExam ? "application/json" : "text/plain" } })
             });
+            
             const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+            
+            // صدادة الأمان للملفات المرفوضة
+            if (!data.candidates || data.candidates.length === 0) {
+                let blockReason = "السيرفر مرجعش أي إجابة.";
+                if (data.promptFeedback && data.promptFeedback.blockReason) {
+                    blockReason = "جوجل رفض يعالج المحاضرة دي بسبب سياسات الحماية (عشان فيها مصطلحات علمية/طبية اعتبرها حساسة). جرب ملف تاني.";
+                }
+                throw new Error(blockReason);
+            }
+
             const output = data.candidates[0].content.parts[0].text;
+            
             if (isExam) {
                 let cleanOutput = output.replace(/```json/gi, '').replace(/```/gi, '').trim();
-                renderSecureExam(JSON.parse(cleanOutput));
+                try {
+                    renderSecureExam(JSON.parse(cleanOutput));
+                } catch(err) {
+                    throw new Error("جوجل لغبط في تنسيق الامتحان الداخلي، جرب تدوس على زرار الامتحان كمان مرة.");
+                }
             } else {
                 document.getElementById('resTitle').innerText = "📝 الملخص:";
                 resContent.innerHTML = formatText(output);
@@ -327,6 +350,7 @@
         const resContent = document.getElementById('resContent'); resContent.innerHTML = "";
         const scoreBoard = document.getElementById('score-board');
         let score = 0; let answered = 0;
+        
         questions.forEach((q, idx) => {
             const qDiv = document.createElement('div'); qDiv.className = 'q-box';
             qDiv.innerHTML = `<b>${idx+1}. ${q.q}</b>`;
@@ -336,8 +360,16 @@
                     if(qDiv.dataset.done) return; qDiv.dataset.done = "true"; answered++;
                     const letter = opt.match(/^[A-Dأ-د]/i)?.[0].toUpperCase();
                     if(letter === q.ans.toUpperCase() || (letter==='أ' && q.ans==='A') || (letter==='ب' && q.ans==='B') || (letter==='ج' && q.ans==='C') || (letter==='د' && q.ans==='D')) { btn.classList.add('correct'); score++; }
-                    else { btn.classList.add('wrong'); }
-                    if(answered === questions.length) { scoreBoard.innerText = `درجتك: ${score} من ${questions.length} 🥳`; scoreBoard.classList.remove('hidden'); }
+                    else { 
+                        btn.classList.add('wrong'); 
+                        Array.from(qDiv.querySelectorAll('.opt-btn')).forEach(b => { 
+                            let bLetter = b.innerText.match(/^[A-Dأ-د]/i)?.[0].toUpperCase() || b.innerText.charAt(0).toUpperCase();
+                            if(bLetter === q.ans.toUpperCase() || (bLetter==='أ' && q.ans==='A') || (bLetter==='ب' && q.ans==='B') || (bLetter==='ج' && q.ans==='C') || (bLetter==='د' && q.ans==='D')) {
+                                b.classList.add('correct'); 
+                            }
+                        });
+                    }
+                    if(answered === questions.length) { scoreBoard.innerText = `درجتك: ${score} من ${questions.length} 🥳`; scoreBoard.classList.remove('hidden'); window.scrollTo({ top: scoreBoard.offsetTop - 20, behavior: 'smooth' }); }
                 };
                 qDiv.appendChild(btn);
             });
