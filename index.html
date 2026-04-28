@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>zn8h alklab</title>
-    <script src="[https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js](https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js)"></script>
-    <script src="[https://unpkg.com/tesseract.js@v4.0.1/dist/tesseract.min.js](https://unpkg.com/tesseract.js@v4.0.1/dist/tesseract.min.js)"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://unpkg.com/tesseract.js@v4.0.1/dist/tesseract.min.js"></script>
     
     <style>
         :root { --primary: #3742fa; --success: #2ed573; --danger: #ff4757; --bg: #0a0a12; --card: #1e1e2f; --chat-ai: #2d3436; --chat-user: #3742fa; --cyan: #00ffff; }
@@ -26,7 +26,7 @@
 
         /* شاشة التفعيل (Boot Screen) */
         #bootScreen { background: #12151e; padding: 25px; border-radius: 15px; border: 2px solid var(--cyan); box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); margin-bottom: 20px; }
-        #apiKeyInput { width: 90%; font-family: monospace; color: #fff; background: #000; border: 1px dashed var(--cyan); margin-bottom: 15px; padding: 15px; font-size: 11px; text-align: center; direction: ltr; border-radius: 8px; }
+        #apiKeyInput { width: 90%; font-family: monospace; color: #fff; background: #000; border: 1px dashed var(--cyan); margin-bottom: 15px; padding: 15px; font-size: 12px; text-align: center; direction: ltr; border-radius: 8px; }
         .btn-go { background: var(--cyan); color: #000; box-shadow: 0 0 15px rgba(0, 255, 255, 0.4); font-size: 18px; padding: 15px; }
 
         /* كتاب الهوليجرام */
@@ -73,16 +73,16 @@
 
     <div class="ad-container">
         <iframe 
-            srcdoc="<script type='text/javascript'>atOptions = { 'key' : '2c561b19eb0e3bfa10d7c2d1509ed9a1', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script><script type='text/javascript' src='[https://www.highperformanceformat.com/2c561b19eb0e3bfa10d7c2d1509ed9a1/invoke.js](https://www.highperformanceformat.com/2c561b19eb0e3bfa10d7c2d1509ed9a1/invoke.js)'></script>" 
+            srcdoc="<script type='text/javascript'>atOptions = { 'key' : '2c561b19eb0e3bfa10d7c2d1509ed9a1', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };</script><script type='text/javascript' src='https://www.highperformanceformat.com/2c561b19eb0e3bfa10d7c2d1509ed9a1/invoke.js'></script>" 
             width="320" height="50" frameborder="0" scrolling="no" 
             sandbox="allow-scripts allow-popups allow-same-origin">
         </iframe>
     </div>
 
     <div id="bootScreen">
-        <h3 style="color: var(--cyan); margin-top: 0;">⚙️ سيرفر Google Gemini</h3>
-        <p style="font-size: 12px; color: gray; margin-bottom: 15px;">السيرفر متصل.. دوس GO عشان تفعل المنصة</p>
-        <input type="text" id="apiKeyInput" readonly>
+        <h3 style="color: var(--cyan); margin-top: 0;">⚙️ تفعيل سيرفر Google Gemini</h3>
+        <p style="font-size: 12px; color: gray; margin-bottom: 15px;">السيرفر جاهز.. دوس GO عشان تذاكر يا بطل</p>
+        <input type="text" id="apiKeyInput" value="AIzaSyC6Z-kawo4I0TVYC3pCJAUQgBlIsiT82VM">
         <button class="btn btn-go" onclick="bootSystem()">GO 🚀 (تفعيل)</button>
     </div>
 
@@ -96,7 +96,6 @@
             <input type="number" id="pageStart" value="1" min="1" style="width: 60px;">
             <label>إلى صفحة:</label>
             <input type="number" id="pageEnd" value="3" min="1" style="width: 60px;">
-            <p style="font-size: 11px; color: #aaa; margin: 5px 0 0 0;">* لو الملف متصور (صور)، يفضل تختار 3 لـ 5 صفحات بالكتير عشان وقت المعالجة.</p>
         </div>
 
         <div class="controls-box">
@@ -138,14 +137,12 @@
 <div id="guideModal" class="modal">
     <div class="modal-content">
         <span class="close-modal" onclick="document.getElementById('guideModal').style.display='none'">&times;</span>
-        <h2 style="color: var(--cyan); margin-top: 0; text-align: center;">📖 دليل الهوليجرام الذكي</h2>
+        <h2 style="color: var(--cyan); margin-top: 0; text-align: center;">📖 دليل الهوليجرام</h2>
         <div style="color: #e0e0e0; font-size: 15px; line-height: 1.8;">
-            <p><b>1. ⚙️ زرار GO:</b> دوس هنا عشان تفعل السيرفر المجاني للمنصة.</p>
-            <p><b>2. 📁 رفع المحاضرة:</b> اختار ملف الـ PDF بتاعك.</p>
-            <p><b>3. 📄 تحديد الصفحات:</b> حدد من صفحة كام لكام.</p>
-            <p><b>4. 📝 التلخيص:</b> هيفلتر المحاضرة ويجيبلك الزتونة.</p>
-            <p><b>5. ✍️ الامتحان:</b> هيعملك امتحان MCQ محترم ويحسبلك النتيجة.</p>
-            <p><b>6. 💬 الشات:</b> اسأل دكتور المادة (AI) في أي حاجة.</p>
+            <p>1. دوس <b>GO</b> عشان تفتح المنصة.</p>
+            <p>2. ارفع ملف الـ <b>PDF</b>.</p>
+            <p>3. اختار الصفحات والأسئلة اللي عاوزها.</p>
+            <p>4. استمتع بالتلخيص أو الامتحان أو الشات!</p>
         </div>
         <button class="btn btn-go" style="margin-top: 15px;" onclick="document.getElementById('guideModal').style.display='none'">فهمت، يلا بينا 🚀</button>
     </div>
@@ -158,47 +155,37 @@
     </div>
     <div class="chat-messages" id="chatBox"></div>
     <div class="chat-input-area">
-        <input type="text" id="chatMsg" placeholder="اسأل، اطلب أسئلة، أو مصادر خارجية..." onkeypress="if(event.key === 'Enter') sendChat()">
+        <input type="text" id="chatMsg" placeholder="اسأل أي حاجة..." onkeypress="if(event.key === 'Enter') sendChat()">
         <button class="btn" style="margin:0; padding:10px 20px;" onclick="sendChat()">إرسال 🚀</button>
     </div>
 </div>
 
 <script>
-    // --- الحماية الفولاذية ---
+    // --- الحماية ---
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.onkeydown = function(e) {
         if (e.keyCode == 123) return false;
         if (e.ctrlKey && e.shiftKey && (e.keyCode == 'I'.charCodeAt(0) || e.keyCode == 'J'.charCodeAt(0) || e.keyCode == 'C'.charCodeAt(0))) return false;
-        if (e.ctrlKey && (e.keyCode == 'U'.charCodeAt(0) || e.keyCode == 'S'.charCodeAt(0))) return false;
     };
     (function(){ setInterval(function(){ debugger; }, 100); })();
-    // -------------------------
 
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '[https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js](https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js)';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
     let globalPdfText = ""; 
     let chatHistory = []; 
     let activeKey = ""; 
 
-    // تجميع الكي في المخفي عشان ميتسرقش من جيت هاب
-    window.onload = function() {
-        const p1 = "AIzaSy" + "C6Z-";
-        const p2 = "kawo4I0TVYC3pCJAUQgBlIsiT82VM";
-        document.getElementById('apiKeyInput').value = p1 + p2;
-    };
-
     function bootSystem() {
         activeKey = document.getElementById('apiKeyInput').value.trim();
-        if(!activeKey) return alert("مفيش مفتاح تشغيل!");
+        if(!activeKey) return alert("لازم يكون في مفتاح تشغيل!");
         document.getElementById('bootScreen').style.display = 'none';
         document.getElementById('mainApp').classList.remove('hidden');
     }
 
     function sendToSupport() {
         const msg = document.getElementById('contactMsg').value.trim();
-        if(!msg) return alert("اكتب رسالة الأول يا بطل!");
-        const phoneNumber = "201288894905"; 
-        window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent("رسالة من منصة zn8h alklab: \n" + msg)}`, '_blank');
+        if(!msg) return alert("اكتب رسالة الأول!");
+        window.open(`https://wa.me/201288894905?text=${encodeURIComponent("رسالة: \n" + msg)}`, '_blank');
     }
 
     document.getElementById('pdfInput').onchange = function() {
@@ -215,64 +202,45 @@
     async function extractTextFromPage(page) {
         const textContent = await page.getTextContent();
         let pageText = textContent.items.map(it => it.str).join(" ");
-        
         if (pageText.trim().length < 20) {
             const viewport = page.getViewport({ scale: 1.5 });
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             canvas.height = viewport.height;
             canvas.width = viewport.width;
-            
             await page.render({ canvasContext: context, viewport: viewport }).promise;
-            
             try {
                 const { data: { text } } = await Tesseract.recognize(canvas, 'ara');
                 pageText = text;
-            } catch (err) {
-                console.error("خطأ OCR:", err);
-            }
+            } catch (err) { console.error(err); }
         }
         return pageText;
     }
 
-    // --- الشات باستخدام Gemini ---
     async function openChatMode() {
-        if(!activeKey) return alert("لازم تدوس GO الأول وتفعل السيرفر!");
         const fileInput = document.getElementById('pdfInput');
         if(!fileInput.files[0]) return alert("ارفع المحاضرة الأول!");
-        
         document.getElementById('homePage').classList.add('hidden');
         document.getElementById('chatPage').classList.remove('hidden');
         const chatBox = document.getElementById('chatBox');
-        
         if (chatHistory.length === 0) {
-            chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">بقرأ المحاضرة بجوجل جيميناي.. ثواني ⏳</div></div>`;
+            chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">بقرأ المحاضرة.. ثواني ⏳</div></div>`;
             try {
                 const arrayBuffer = await fileInput.files[0].arrayBuffer();
                 const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
                 globalPdfText = ""; 
-                
                 let pStart = parseInt(document.getElementById('pageStart').value) || 1;
-                let pEnd = parseInt(document.getElementById('pageEnd').value) || 20;
-                if(pStart < 1) pStart = 1;
-                if(pEnd > pdf.numPages) pEnd = pdf.numPages;
-                if((pEnd - pStart) > 20) pEnd = pStart + 20;
-
-                for (let i = pStart; i <= pEnd; i++) {
+                let pEnd = parseInt(document.getElementById('pageEnd').value) || 15;
+                for (let i = pStart; i <= Math.min(pEnd, pdf.numPages); i++) {
                     const page = await pdf.getPage(i);
                     globalPdfText += (await extractTextFromPage(page)) + " ";
                 }
-                
-                // تهيئة الشات لجوجل
                 chatHistory = [
-                    { role: "user", parts: [{ text: `أنت دكتور جامعي خبير. هذا نص المحاضرة: ${globalPdfText.substring(0, 15000)}. سأسألك عنها الآن لتشرح لي.` }] },
-                    { role: "model", parts: [{ text: "أهلاً بك! أنا دكتور المادة، قمت بقراءة المحاضرة وجاهز للإجابة على أسئلتك." }] }
+                    { role: "user", parts: [{ text: `أنت دكتور جامعي خبير. هذا نص المحاضرة: ${globalPdfText.substring(0, 15000)}. سأسألك عنها الآن لتشرح لي بوضوح.` }] },
+                    { role: "model", parts: [{ text: "أهلاً بك! أنا جاهز لشرح المحاضرة لك. اسأل ما بدا لك." }] }
                 ];
-                
-                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">أهلاً بيك! أنا دكتور المادة، قريت المحاضرة وجاهز. اسألني في أي حاجة! 🚀</div></div>`;
-            } catch(e) {
-                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai" style="background:var(--danger)">عطل في القراءة: ${e.message}</div></div>`;
-            }
+                chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai">أهلاً بيك! أنا دكتور المادة وقريت اللي حددته، اسألني في أي حاجة! 🚀</div></div>`;
+            } catch(e) { chatBox.innerHTML = `<div class="msg-row ai"><div class="msg-bubble ai" style="background:var(--danger)">عطل: ${e.message}</div></div>`; }
         }
     }
 
@@ -285,30 +253,20 @@
         const inputField = document.getElementById('chatMsg');
         const msgText = inputField.value.trim();
         if(!msgText) return;
-
         const chatBox = document.getElementById('chatBox');
         chatBox.innerHTML += `<div class="msg-row user"><div class="msg-bubble user">${msgText}</div></div>`;
         inputField.value = '';
         chatBox.scrollTop = chatBox.scrollHeight;
-
         chatHistory.push({ role: "user", parts: [{ text: msgText }] });
-
         const loadingId = "load-" + Date.now();
         chatBox.innerHTML += `<div id="${loadingId}" class="msg-row ai"><div class="msg-bubble ai">بجهز الرد... ✍️</div></div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
-
         try {
-            // استخدام الموديل الصحيح لـ Gemini
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${activeKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ contents: chatHistory })
             });
-            
             const data = await response.json();
-            
-            if (data.error) throw new Error(data.error.message);
-
             const aiReply = data.candidates[0].content.parts[0].text;
             document.getElementById(loadingId).remove();
             chatBox.innerHTML += `<div class="msg-row ai"><div class="msg-bubble ai">${formatText(aiReply)}</div></div>`;
@@ -316,151 +274,70 @@
             chatBox.scrollTop = chatBox.scrollHeight;
         } catch (e) {
             document.getElementById(loadingId).remove();
-            chatBox.innerHTML += `<div class="msg-row ai"><div class="msg-bubble ai" style="background:var(--danger)">❌ عطل من جوجل: ${e.message}</div></div>`;
+            chatBox.innerHTML += `<div class="msg-row ai"><div class="msg-bubble ai" style="background:var(--danger)">❌ عطل: ${e.message}</div></div>`;
         }
     }
 
-    // --- التلخيص والامتحان باستخدام Gemini JSON Mode ---
     async function startProcess(mode) {
-        if(!activeKey) return alert("لازم تدوس GO الأول وتفعل السيرفر!");
         const fileInput = document.getElementById('pdfInput');
         if(!fileInput.files[0]) return alert("ارفع المحاضرة!");
-
         const resBox = document.getElementById('resBox');
         const resContent = document.getElementById('resContent');
         const music = document.getElementById('examMusic');
         const scoreBoard = document.getElementById('score-board');
-        
         resBox.classList.remove('hidden');
         if(scoreBoard) scoreBoard.classList.add('hidden');
-        resContent.innerHTML = "<b>جاري التحليل والمعالجة بجوجل جيميناي... 🧠 ⏳</b>";
-        
+        resContent.innerHTML = "<b>جاري المعالجة بجوجل جيميناي... 🧠 ⏳</b>";
         if(mode === 'exam') music.play().catch(() => {}); else { music.pause(); music.currentTime = 0; }
-
         try {
             const arrayBuffer = await fileInput.files[0].arrayBuffer();
             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
             let text = "";
-            
             let pStart = parseInt(document.getElementById('pageStart').value) || 1;
             let pEnd = parseInt(document.getElementById('pageEnd').value) || 15;
-            
-            if(pStart < 1) pStart = 1;
-            if(pEnd > pdf.numPages) pEnd = pdf.numPages;
-            if((pEnd - pStart) > 20) pEnd = pStart + 20;
-
-            for (let i = pStart; i <= pEnd; i++) { 
+            for (let i = pStart; i <= Math.min(pEnd, pdf.numPages); i++) {
                 const page = await pdf.getPage(i);
                 text += (await extractTextFromPage(page)) + " "; 
             }
-
             const qCount = document.getElementById('qCount').value || 10;
             const qDiff = document.getElementById('qDiff').value || "متوسط";
-
             let isExam = mode === 'exam';
-            let prompt = "";
-            let mimeType = "text/plain";
+            let prompt = isExam ? 
+                `قم بعمل امتحان MCQ مكون من (${qCount} أسئلة) بصعوبة (${qDiff}) من النص. ارجع مصفوفة JSON فقط: [{"q":"السؤال","opts":["A) اختيار","B) اختيار"],"ans":"A"}] النص: ${text.substring(0, 5000)}` :
+                `لخص النص بوضوح في عناوين ونقاط: ${text.substring(0, 5000)}`;
 
-            if (isExam) {
-                mimeType = "application/json";
-                prompt = `قم بعمل امتحان MCQ مكون من (${qCount} أسئلة) بصعوبة (${qDiff}) من النص التالي.
-                يجب أن يكون الناتج عبارة عن مصفوفة JSON صالحة فقط بهذا التنسيق وبدون أي نصوص إضافية:
-                [
-                  {
-                    "q": "نص السؤال هنا",
-                    "opts": ["A) اختيار 1", "B) اختيار 2", "C) اختيار 3", "D) اختيار 4"],
-                    "ans": "A"
-                  }
-                ]
-                النص: ${text.substring(0, 5000)}`;
-            } else {
-                prompt = `لخص هذا النص الأكاديمي بشكل دقيق وشامل في نقاط وعناوين: ${text.substring(0, 5000)}`;
-            }
-
-            // استخدام الموديل الصحيح لـ Gemini
             const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${activeKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: mimeType }
-                })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: isExam ? "application/json" : "text/plain" } })
             });
-
             const data = await response.json();
-            
-            if (data.error) throw new Error(data.error.message);
-
             const output = data.candidates[0].content.parts[0].text;
-
             if (isExam) {
-                // تنظيف الإجابة لو جوجل بعت JSON جواه markdown
                 let cleanOutput = output.replace(/```json/gi, '').replace(/```/gi, '').trim();
-                let questions = JSON.parse(cleanOutput);
-                renderSecureExam(questions);
+                renderSecureExam(JSON.parse(cleanOutput));
             } else {
-                document.getElementById('resTitle').innerText = "📝 الملخص الشامل:";
+                document.getElementById('resTitle').innerText = "📝 الملخص:";
                 resContent.innerHTML = formatText(output);
             }
-
-        } catch (e) { 
-            let msg = e.message;
-            if(msg.includes("API key not valid")) msg = "مفتاح جوجل اللي حطيته غلط! اتأكد منه.";
-            resContent.innerHTML = `<span style="color:var(--danger)">❌ خطأ من جوجل: ${msg}</span>`; 
-        }
+        } catch (e) { resContent.innerHTML = `<span style="color:var(--danger)">❌ خطأ: ${e.message}</span>`; }
     }
 
-    // دالة الامتحان اللي مستحيل تبوظ
     function renderSecureExam(questions) {
         document.getElementById('resTitle').innerText = "✍️ امتحان التحدي:";
-        const resContent = document.getElementById('resContent'); 
-        resContent.innerHTML = "";
+        const resContent = document.getElementById('resContent'); resContent.innerHTML = "";
         const scoreBoard = document.getElementById('score-board');
-        
         let score = 0; let answered = 0;
-
         questions.forEach((q, idx) => {
-            const qDiv = document.createElement('div'); 
-            qDiv.className = 'q-box';
+            const qDiv = document.createElement('div'); qDiv.className = 'q-box';
             qDiv.innerHTML = `<b>${idx+1}. ${q.q}</b>`;
-
             q.opts.forEach(opt => {
-                const letterMatch = opt.match(/^[A-Dأ-د]/i);
-                const letter = letterMatch ? letterMatch[0].toUpperCase() : opt.charAt(0).toUpperCase();
-                
-                const btn = document.createElement('button');
-                btn.className = 'opt-btn'; 
-                btn.innerText = opt;
-                
+                const btn = document.createElement('button'); btn.className = 'opt-btn'; btn.innerText = opt;
                 btn.onclick = () => {
-                    if(qDiv.dataset.done) return; 
-                    qDiv.dataset.done = "true"; 
-                    answered++;
-                    
-                    let cLetter = q.ans.toUpperCase();
-                    let isMatch = (letter === cLetter) || 
-                                  (letter === 'أ' && cLetter === 'A') || 
-                                  (letter === 'ب' && cLetter === 'B') || 
-                                  (letter === 'ج' && cLetter === 'C') || 
-                                  (letter === 'د' && cLetter === 'D');
-
-                    if(isMatch) { 
-                        btn.classList.add('correct'); score++; 
-                    } else { 
-                        btn.classList.add('wrong'); 
-                        Array.from(qDiv.querySelectorAll('.opt-btn')).forEach(b => { 
-                            let bLetterMatch = b.innerText.match(/^[A-Dأ-د]/i);
-                            let bLetter = bLetterMatch ? bLetterMatch[0].toUpperCase() : b.innerText.charAt(0).toUpperCase();
-                            if((bLetter === cLetter) || (bLetter === 'أ' && cLetter === 'A') || (bLetter === 'ب' && cLetter === 'B') || (bLetter === 'ج' && cLetter === 'C') || (bLetter === 'د' && cLetter === 'D')) {
-                                b.classList.add('correct'); 
-                            }
-                        }); 
-                    }
-                    if(answered === questions.length) { 
-                        scoreBoard.innerText = `درجتك: ${score} من ${questions.length} 🥳`; 
-                        scoreBoard.classList.remove('hidden'); 
-                        window.scrollTo({ top: scoreBoard.offsetTop - 20, behavior: 'smooth' }); 
-                    }
+                    if(qDiv.dataset.done) return; qDiv.dataset.done = "true"; answered++;
+                    const letter = opt.match(/^[A-Dأ-د]/i)?.[0].toUpperCase();
+                    if(letter === q.ans.toUpperCase() || (letter==='أ' && q.ans==='A') || (letter==='ب' && q.ans==='B') || (letter==='ج' && q.ans==='C') || (letter==='د' && q.ans==='D')) { btn.classList.add('correct'); score++; }
+                    else { btn.classList.add('wrong'); }
+                    if(answered === questions.length) { scoreBoard.innerText = `درجتك: ${score} من ${questions.length} 🥳`; scoreBoard.classList.remove('hidden'); }
                 };
                 qDiv.appendChild(btn);
             });
